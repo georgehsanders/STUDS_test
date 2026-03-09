@@ -537,7 +537,7 @@ def email_draft(store_id):
     # Build SKU table
     sku_lines = []
     for d in store.get('sku_details', []):
-        sku_lines.append(f"  - SKU: {d['sku']} | Required Push: {d['quantity']} | Actual Push: {d['actual_push']} | Discrepancy: {d['discrepancy']}")
+        sku_lines.append(f"  - SKU: {d['sku']} | Required Adjustment: {d['quantity']} | Actual Adjustment: {d['actual_push']} | Discrepancy: {d['discrepancy']}")
 
     sku_table = "\n".join(sku_lines) if sku_lines else "  (No specific discrepancies)"
     body = template.replace('{{sku_table}}', sku_table)
