@@ -1,0 +1,27 @@
+Product ID, SKU, Product Name, Options, Quantity, Price, Reference, Warehouse, Date, Movement ID
+4001, EAR-TI-GLD, Tiny Gold Studs, , -1, 24.99, Stock Update, 1001, 03/05/2026 09:14, MV-90001
+4003, EAR-HG-GLD, Huggie Gold Hoops, , -3, 34.99, Stock Update, 1001, 03/05/2026 09:16, MV-90002
+4005, EAR-FL-GLD, Flat Back Gold Labret, , 2, 29.99, Stock Check, 1001, 03/05/2026 09:18, MV-90003
+4007, EAR-CZ-CLR, CZ Clear Round Stud, , -3, 19.99, Stock Update, 1001, 03/05/2026 09:20, MV-90004
+4010, EAR-OP-PNK, Opal Pink Cabochon, , -1, 27.99, Stock Update, 1001, 03/05/2026 09:22, MV-90005
+4018, EAR-CH-THR, Chain Threader, , -2, 22.99, Stock Update, 1001, 03/05/2026 09:30, MV-90006
+4001, EAR-TI-GLD, Tiny Gold Studs, , 5, 24.99, Sales Order SO-4412, 1001, 03/04/2026 14:30, MV-89501
+4003, EAR-HG-GLD, Huggie Gold Hoops, , -2, 34.99, Sales Order SO-4418, 1001, 03/04/2026 15:10, MV-89502
+4012, EAR-ST-HRT, Star Heart Charm, , -1, 18.99, Sales Order SO-4420, 1001, 03/06/2026 11:00, MV-90100
+4001, EAR-TI-GLD, Tiny Gold Studs, , -2, 24.99, Sales Order SO-4490, 1002, 03/04/2026 10:05, MV-89601
+4005, EAR-FL-GLD, Flat Back Gold Labret, , -3, 29.99, Sales Order SO-4491, 1002, 03/04/2026 10:20, MV-89602
+4007, EAR-CZ-CLR, CZ Clear Round Stud, , 1, 19.99, Goods In PO-2201, 1002, 03/03/2026 08:30, MV-89401
+4001, EAR-TI-GLD, Tiny Gold Studs, , -2, 24.99, Stock Update, 1003, 03/06/2026 16:45, MV-90201
+4002, EAR-TI-SLV, Tiny Silver Studs, , 2, 22.99, Stock Check, 1003, 03/06/2026 16:47, MV-90202
+4001, EAR-TI-GLD, Tiny Gold Studs, , -3, 24.99, Sales Order SO-4501, 1003, 03/05/2026 12:15, MV-90050
+4006, EAR-FL-SLV, Flat Back Silver Labret, , -2, 27.99, Sales Order SO-4502, 1003, 03/05/2026 13:00, MV-90051
+4009, EAR-OP-WHT, Opal White Cabochon, , 6, 25.99, Goods In PO-2205, 1003, 03/03/2026 09:00, MV-89410
+4001, EAR-TI-GLD, Tiny Gold Studs, , -2, 24.99, Stock Update, 1004, 03/06/2026 10:00, MV-90301
+4003, EAR-HG-GLD, Huggie Gold Hoops, , -2, 34.99, Stock Update, 1004, 03/06/2026 10:05, MV-90302
+4007, EAR-CZ-CLR, CZ Clear Round Stud, , -2, 19.99, Stock Check, 1004, 03/06/2026 10:10, MV-90303
+4001, EAR-TI-GLD, Tiny Gold Studs, , -4, 24.99, Sales Order SO-4510, 1004, 03/04/2026 16:00, MV-89701
+4002, EAR-TI-SLV, Tiny Silver Studs, , -2, 22.99, Stock Update, 1005, 03/06/2026 14:00, MV-90401
+4010, EAR-OP-PNK, Opal Pink Cabochon, , -2, 27.99, Stock Check, 1005, 03/06/2026 14:05, MV-90402
+4018, EAR-CH-THR, Chain Threader, , -2, 22.99, Stock Update, 1005, 03/06/2026 14:10, MV-90403
+4001, EAR-TI-GLD, Tiny Gold Studs, , -1, 24.99, Sales Order SO-4520, 1005, 03/05/2026 09:30, MV-90060
+4003, EAR-HG-GLD, Huggie Gold Hoops, , 4, 34.99, Goods In PO-2210, 1005, 03/03/2026 08:45, MV-89420

@@ -1,0 +1,20 @@
+Sku, Description, Counted Units, Onhand Units, Unit Variance, Areas
+EAR-TI-GLD, Tiny Gold Studs, 24, 25, -1, Display Case A
+EAR-TI-SLV, Tiny Silver Studs, 18, 18, 0, Display Case A
+EAR-HG-GLD, Huggie Gold Hoops, 12, 15, -3, Display Case B
+EAR-HG-SLV, Huggie Silver Hoops, 9, 9, 0, Display Case B
+EAR-FL-GLD, Flat Back Gold Labret, 30, 28, 2, Piercing Station 1
+EAR-FL-SLV, Flat Back Silver Labret, 22, 22, 0, Piercing Station 1
+EAR-CZ-CLR, CZ Clear Round Stud, 0, 3, -3, Display Case C
+EAR-CZ-BLK, CZ Black Round Stud, 7, 7, 0, Display Case C
+EAR-OP-WHT, Opal White Cabochon, 14, 14, 0, Display Case D
+EAR-OP-PNK, Opal Pink Cabochon, 11, 12, -1, Display Case D
+EAR-ST-MN, Star Moon Charm, 6, 6, 0, Wall Rack
+EAR-ST-HRT, Star Heart Charm, 8, 10, -2, Wall Rack
+EAR-BZ-GLD, Bezel Set Gold, 5, 5, 0, Display Case E
+EAR-BZ-SLV, Bezel Set Silver, 3, 3, 0, Display Case E
+EAR-CL-DBL, Cluster Double Stack, 4, 4, 0, Display Case F
+EAR-CL-TRP, Cluster Triple Stack, 2, 2, 0, Display Case F
+EAR-CH-LNK, Chain Link Drop, 10, 10, 0, Wall Rack
+EAR-CH-THR, Chain Threader, 7, 9, -2, Wall Rack
+RS-REPAIR-01, Repair Kit Standard, 5, 5, 0, Back Stock
