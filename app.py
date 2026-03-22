@@ -367,7 +367,7 @@ def run_reconciliation():
         if wh:
             all_store_ids.add(wh)
 
-    for store_id in sorted(all_store_ids, key=lambda x: int(x) if x.isdigit() else x):
+    for store_id in sorted(all_store_ids, key=lambda x: x.zfill(10) if x.isdigit() else x):
         store_name = store_names.get(store_id, store_id)
 
         if store_id not in scan['variance_files']:
