@@ -38,9 +38,8 @@ RE_SKU_LIST = re.compile(r'^SKUList_(\d{2}_\d{2}_\d{2})\.csv$')
 RE_VARIANCE = re.compile(r'^(\d+)_Variance(?:_\d{2}[-_]\d{2}[-_]\d{2})?\.csv$')
 RE_AUDIT_TRAIL = re.compile(r'^AuditTrail_(\d{2}[-_]\d{2}[-_]\d{2})\.csv$')
 
-# --- Expected variance file columns ---
-VARIANCE_COLUMNS_NEW = {'sku', 'description', 'counted units', 'onhand units', 'unit variance'}
-VARIANCE_COLUMNS_LEGACY = {'sku', 'quantity'}
+# --- Expected variance file columns (all lowercase; parse_csv lowercases headers) ---
+VARIANCE_COLUMNS = {'sku', 'description', 'counted units', 'onhand units', 'unit variance'}
 
 # --- SKU exclusion ---
 RE_RS_PREFIX = re.compile(r'^RS', re.IGNORECASE)
@@ -177,8 +176,7 @@ def load_sku_list(filepath):
 
 def load_variance(filepath):
     """Load a per-store variance file. Validates expected columns before processing.
-    Supports new format (Sku, Description, Counted Units, Onhand Units, Unit Variance)
-    and legacy format (productid, sku, quantity, location, item cost price).
+    Requires format: Sku, Description, Counted Units, Onhand Units, Unit Variance.
     Returns None if the file has an unrecognized schema."""
     filename = os.path.basename(filepath)
     rows = parse_csv(filepath)
@@ -187,55 +185,29 @@ def load_variance(filepath):
 
     headers = set(rows[0].keys())
 
-    # Check new expected format first
-    missing_new = VARIANCE_COLUMNS_NEW - headers
-    if not missing_new:
-        result = []
-        for row in rows:
-            sku = row.get('sku', '').strip()
-            if not sku or is_excluded_sku(sku):
-                continue
-            try:
-                quantity = int(float(row.get('unit variance', '0').strip() or '0'))
-            except (ValueError, TypeError):
-                quantity = 0
-            result.append({
-                'product_id': '',
-                'sku': sku,
-                'quantity': quantity,
-                'location': '',
-                'item_cost_price': 0.0,
-            })
-        return result
+    missing = VARIANCE_COLUMNS - headers
+    if missing:
+        print(f"[STUDS] WARNING: {filename} — unrecognized variance file schema. "
+              f"Missing expected columns: {', '.join(sorted(missing))}")
+        return None
 
-    # Check legacy format
-    if VARIANCE_COLUMNS_LEGACY.issubset(headers):
-        result = []
-        for row in rows:
-            sku = row.get('sku', '').strip()
-            if not sku or is_excluded_sku(sku):
-                continue
-            try:
-                quantity = int(float(row.get('quantity', '0').strip() or '0'))
-            except (ValueError, TypeError):
-                quantity = 0
-            try:
-                cost_price = float(row.get('item cost price', '0').strip() or '0')
-            except (ValueError, TypeError):
-                cost_price = 0.0
-            result.append({
-                'product_id': row.get('productid', ''),
-                'sku': sku,
-                'quantity': quantity,
-                'location': row.get('location', ''),
-                'item_cost_price': cost_price,
-            })
-        return result
-
-    # Unrecognized schema
-    print(f"[STUDS] WARNING: {filename} — unrecognized variance file schema. "
-          f"Missing expected columns: {', '.join(sorted(missing_new))}")
-    return None
+    result = []
+    for row in rows:
+        sku = row.get('sku', '').strip()
+        if not sku or is_excluded_sku(sku):
+            continue
+        try:
+            quantity = int(float(row.get('unit variance', '0').strip() or '0'))
+        except (ValueError, TypeError):
+            quantity = 0
+        result.append({
+            'product_id': '',
+            'sku': sku,
+            'quantity': quantity,
+            'location': '',
+            'item_cost_price': 0.0,
+        })
+    return result
 
 
 def parse_warehouse_id(warehouse_str):
