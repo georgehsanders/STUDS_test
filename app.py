@@ -35,7 +35,7 @@ DEFAULT_EMAIL_BODY = (
 
 # --- File pattern regexes ---
 RE_SKU_LIST = re.compile(r'^SKUList_(\d{2}_\d{2}_\d{2})\.csv$')
-RE_VARIANCE = re.compile(r'^(\d+)_Variance(?:_\d{2}[-_]\d{2}[-_]\d{2})?\.csv$')
+RE_VARIANCE = re.compile(r'^(\d+)_Variance(?:_\d{2}[-_]\d{2}[-_]\d{2})?(?:_.+)?\.csv$')
 RE_AUDIT_TRAIL = re.compile(r'^AuditTrail_(\d{2}[-_]\d{2}[-_]\d{2})\.csv$')
 
 # --- Expected variance file columns (all lowercase; parse_csv lowercases headers) ---
