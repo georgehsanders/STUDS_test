@@ -1776,18 +1776,21 @@ body.hq-body .settings-textarea {
     position: relative;
 }
 
-.hq-zone1-left,
-.hq-zone1-right {
+.hq-portal-nav {
     display: flex;
     align-items: center;
-    gap: 18px;
-    flex-shrink: 0;
-    position: relative;
+    gap: 10px;
     z-index: 1;
 }
 
-.hq-zone1-right {
-    justify-content: flex-end;
+.hq-nav-sep {
+    color: #cccccc;
+    font-size: 11px;
+    user-select: none;
+}
+
+.hq-current {
+    text-decoration: underline;
 }
 
 .hq-logo-block {
@@ -1795,7 +1798,7 @@ body.hq-body .settings-textarea {
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-    z-index: 0;
+    pointer-events: none;
 }
 
 .hq-spa-logotype {
@@ -1848,7 +1851,11 @@ hr.hq-header-rule {
     border: none;
     border-top: 1.5px solid #000000;
     margin: 0;
+    padding: 0;
     width: 100%;
+    background: none;
+    color: #000000;
+    height: 0;
 }
 
 button.hq-portal-link {

@@ -10,20 +10,24 @@
 
     <header class="hq-spa-header">
         <div class="hq-zone1">
-            <div class="hq-zone1-left">
-                <span class="hq-portal-link hq-portal-current">HQ</span>
+            <nav class="hq-portal-nav hq-portal-nav-left">
+                <a href="/hq/" class="hq-portal-link hq-current">HQ</a>
+                <span class="hq-nav-sep">|</span>
                 <a href="/hq/goto-studio" class="hq-portal-link">STUDIO</a>
+                <span class="hq-nav-sep">|</span>
                 <a href="/hq/logout" class="hq-portal-link">LOGOUT</a>
-            </div>
+            </nav>
             <div class="hq-logo-block">
                 <span class="hq-spa-logotype">STUDS</span>
                 <span class="hq-spa-confidential">CONFIDENTIAL</span>
             </div>
-            <div class="hq-zone1-right">
+            <nav class="hq-portal-nav hq-portal-nav-right">
                 <a href="/hq/upload" class="hq-portal-link">UPLOAD</a>
-                <a href="#" class="hq-portal-link" onclick="event.preventDefault(); doRefresh();">REFRESH</a>
+                <span class="hq-nav-sep">|</span>
+                <button class="hq-portal-link" onclick="doRefresh();">REFRESH</button>
+                <span class="hq-nav-sep">|</span>
                 <a href="/hq/settings" class="hq-portal-link">SETTINGS</a>
-            </div>
+            </nav>
         </div>
         <hr class="hq-header-rule">
         <div class="hq-zone2">
