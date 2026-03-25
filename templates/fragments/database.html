@@ -1,0 +1,86 @@
+<!-- Master SKU File -->
+<div class="hq-section">
+    <h2 class="hq-section-heading">Master SKU File</h2>
+    <p class="hq-help-text">SKU_Master.csv — {{ msf_rows }} SKUs — Last updated: {{ msf_updated }}</p>
+    <form method="POST" action="/hq/database/upload-msf" enctype="multipart/form-data" class="hq-upload-form">
+        <input type="file" name="msf_file" accept=".csv" required>
+        <button type="submit" class="hq-btn hq-btn-lavender">UPLOAD</button>
+    </form>
+</div>
+
+<!-- Product Images -->
+<div class="hq-section">
+    <h2 class="hq-section-heading">Product Images</h2>
+    <p class="hq-help-text">{{ image_count }} images in /database/images/</p>
+    <form method="POST" action="/hq/database/upload-images" enctype="multipart/form-data" class="hq-upload-form">
+        <input type="file" name="image_files" multiple accept=".jpg,.jpeg,.png,.webp" required>
+        <button type="submit" class="hq-btn hq-btn-lavender">UPLOAD</button>
+    </form>
+</div>
+
+<!-- Image/SKU Audit Results -->
+<div class="hq-section">
+    <h2 class="hq-section-heading">Image / SKU Audit</h2>
+    <p class="hq-help-text">{{ orphaned|length }} orphaned images — {{ missing|length }} SKUs missing images</p>
+
+    {% if orphaned %}
+    <h3 class="hq-subsection-heading">Orphaned Images (no matching SKU)</h3>
+    <table class="hq-table">
+        <thead>
+            <tr>
+                <th>Preview</th>
+                <th>Filename</th>
+                <th>Assign to SKU</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flag in orphaned %}
+            <tr>
+                <td><img src="/database/images/{{ flag.image_filename }}" class="hq-thumb"></td>
+                <td>{{ flag.image_filename }}</td>
+                <td>
+                    <form method="POST" action="/hq/database/assign-image" style="display:flex;gap:6px;margin:0;">
+                        <input type="hidden" name="image_filename" value="{{ flag.image_filename }}">
+                        <input type="text" name="sku" placeholder="SKU" class="hq-input" style="width:120px;">
+                        <button type="submit" class="hq-btn hq-btn-lavender" style="height:28px;font-size:11px;padding:0 10px;">ASSIGN</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="/hq/database/mark-discontinued" style="margin:0;">
+                        <input type="hidden" name="image_filename" value="{{ flag.image_filename }}">
+                        <button type="submit" class="hq-btn-delete">DISCONTINUE</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if missing %}
+    <h3 class="hq-subsection-heading" style="margin-top:20px;">Missing Images (SKU has no image)</h3>
+    <table class="hq-table">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Description</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flag in missing %}
+            <tr>
+                <td>{{ flag.sku }}</td>
+                <td>{{ flag.description }}</td>
+                <td class="hq-muted-text">No image on file</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if not orphaned and not missing %}
+    <p class="hq-no-disc">All SKUs and images are matched.</p>
+    {% endif %}
+</div>

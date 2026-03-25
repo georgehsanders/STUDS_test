@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDS HQ</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="hq-body">
+
+    <header class="hq-spa-header">
+        <div class="hq-zone1">
+            <div class="hq-zone1-left">
+                <span class="hq-portal-link hq-portal-current">HQ</span>
+                <a href="/hq/goto-studio" class="hq-portal-link">STUDIO</a>
+                <a href="/hq/logout" class="hq-portal-link">LOGOUT</a>
+            </div>
+            <div class="hq-logo-block">
+                <span class="hq-spa-logotype">STUDS</span>
+                <span class="hq-spa-confidential">CONFIDENTIAL</span>
+            </div>
+            <div class="hq-zone1-right">
+                <a href="/hq/upload" class="hq-portal-link">UPLOAD</a>
+                <a href="#" class="hq-portal-link" onclick="event.preventDefault(); doRefresh();">REFRESH</a>
+                <a href="/hq/settings" class="hq-portal-link">SETTINGS</a>
+            </div>
+        </div>
+        <div class="hq-header-divider"></div>
+        <div class="hq-zone2">
+            <div class="hq-zone2-left">
+                <a href="#" class="hq-section-link" data-section="dashboard" onclick="event.preventDefault(); loadSection('dashboard');">DASHBOARD</a>
+                <a href="#" class="hq-section-link" data-section="analytics" onclick="event.preventDefault(); loadSection('analytics');">ANALYTICS</a>
+                <a href="#" class="hq-section-link" data-section="database" onclick="event.preventDefault(); loadSection('database');">DATABASE</a>
+                <a href="#" class="hq-section-link" data-section="studios" onclick="event.preventDefault(); loadSection('studios');">STUDIOS</a>
+            </div>
+            <div class="hq-zone2-right">
+                <span class="hq-timestamp-box">Updated: <strong id="last-loaded">{{ data.last_loaded }}</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <main id="hq-content" class="hq-main"></main>
+
+    <script>
+        var storeDataGlobal = {{ db_stores | tojson }};
+        var currentSection = null;
+
+        function loadSection(section) {
+            currentSection = section;
+            document.querySelectorAll('.hq-section-link').forEach(function(l) {
+                l.style.textDecoration = l.dataset.section === section ? 'underline' : 'none';
+            });
+            fetch('/hq/section/' + section)
+                .then(function(r) { return r.text(); })
+                .then(function(html) {
+                    document.getElementById('hq-content').innerHTML = html;
+                    // Execute scripts in the fragment
+                    var scripts = document.getElementById('hq-content').querySelectorAll('script');
+                    scripts.forEach(function(old) {
+                        var s = document.createElement('script');
+                        s.textContent = old.textContent;
+                        old.parentNode.replaceChild(s, old);
+                    });
+                    history.pushState({section: section}, '', '/hq/?section=' + section);
+                    if (section === 'dashboard') initDashboard();
+                    if (section === 'studios') initStudios();
+                });
+        }
+
+        function doRefresh() {
+            fetch('/hq/refresh', { method: 'POST' })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    document.getElementById('last-loaded').textContent = data.last_loaded;
+                    if (currentSection === 'dashboard') loadSection('dashboard');
+                })
+                .catch(function(err) { alert('Refresh failed: ' + err); });
+        }
+
+        // Dashboard JS functions
+        function initDashboard() {
+            var modal = document.getElementById('email-modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closeEmailModal();
+                });
+            }
+        }
+
+        function toggleDetail(storeId) {
+            var row = document.getElementById('detail-' + storeId);
+            var arrow = document.getElementById('arrow-' + storeId);
+            if (row.style.display === 'none') {
+                row.style.display = 'table-row';
+                arrow.innerHTML = '&#9660;';
+            } else {
+                row.style.display = 'none';
+                arrow.innerHTML = '&#9654;';
+            }
+        }
+
+        function applyFilters() {
+            var filterVal = document.getElementById('filter-status').value;
+            var sortVal = document.getElementById('sort-by').value;
+            var rows = document.querySelectorAll('.store-row');
+            var detailRows = document.querySelectorAll('.detail-row');
+            var pairs = [];
+            rows.forEach(function(row, i) {
+                pairs.push({ row: row, detail: detailRows[i] });
+            });
+            pairs.forEach(function(p) {
+                var status = p.row.getAttribute('data-status');
+                if (filterVal === 'all' || status === filterVal || (filterVal === 'Incomplete' && status.startsWith('Incomplete'))) {
+                    p.row.style.display = '';
+                } else {
+                    p.row.style.display = 'none';
+                    p.detail.style.display = 'none';
+                }
+            });
+            var tbody = document.getElementById('store-tbody');
+            var sortedPairs = pairs.slice().sort(function(a, b) {
+                if (sortVal === 'store_id') {
+                    return parseInt(a.row.getAttribute('data-store-id')) - parseInt(b.row.getAttribute('data-store-id'));
+                } else if (sortVal === 'status') {
+                    var order = {'Discrepancy Detected': 0, 'Incomplete — Missing File': 1, 'Incomplete — Unrecognized File Format': 1, 'Updated': 2};
+                    return (order[a.row.getAttribute('data-status')] || 3) - (order[b.row.getAttribute('data-status')] || 3);
+                } else if (sortVal === 'discrepancy_count') {
+                    return parseInt(b.row.getAttribute('data-discrepancy-count')) - parseInt(a.row.getAttribute('data-discrepancy-count'));
+                }
+                return 0;
+            });
+            sortedPairs.forEach(function(p) {
+                tbody.appendChild(p.row);
+                tbody.appendChild(p.detail);
+            });
+        }
+
+        function showEmailDraft(storeId) {
+            fetch('/hq/email-draft/' + storeId)
+                .then(function(resp) { return resp.json(); })
+                .then(function(draft) {
+                    document.getElementById('modal-title').textContent = 'Email Draft — ' + draft.store_name;
+                    document.getElementById('email-to').value = draft.to;
+                    document.getElementById('email-subject').value = draft.subject;
+                    document.getElementById('email-body').value = draft.body;
+                    document.getElementById('email-modal').style.display = 'flex';
+                })
+                .catch(function(err) { alert('Failed to generate email draft: ' + err); });
+        }
+
+        function closeEmailModal() {
+            document.getElementById('email-modal').style.display = 'none';
+        }
+
+        function copyEmailDraft() {
+            var to = document.getElementById('email-to').value;
+            var subject = document.getElementById('email-subject').value;
+            var body = document.getElementById('email-body').value;
+            var full = 'To: ' + to + '\nSubject: ' + subject + '\n\n' + body;
+            navigator.clipboard.writeText(full).then(function() {
+                var btn = document.querySelector('.hq-modal-footer .btn-primary');
+                btn.textContent = 'Copied!';
+                setTimeout(function() { btn.textContent = 'COPY TO CLIPBOARD'; }, 2000);
+            });
+        }
+
+        // Studios JS functions
+        function initStudios() {
+            document.getElementById('studios-search').focus();
+        }
+
+        function filterStudios() {
+            var query = document.getElementById('studios-search').value.toLowerCase().trim();
+            var rows = document.querySelectorAll('.hq-studios-row');
+            var matches = [];
+            rows.forEach(function(row) {
+                var sid = row.dataset.sid;
+                var name = row.dataset.name;
+                if (!query || sid.indexOf(query) !== -1 || name.indexOf(query) !== -1) {
+                    row.style.display = '';
+                    if (query) matches.push({sid: sid, name: row.children[0].textContent});
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            var dd = document.getElementById('studios-dropdown');
+            if (query && matches.length > 0 && matches.length <= 5) {
+                dd.innerHTML = matches.map(function(m) {
+                    return '<div class="hq-studios-dd-row" onclick="showStoreProfile(\'' + m.sid + '\')">' +
+                        '<span>' + m.name + '</span><span class="hq-muted-text">' + m.sid + '</span></div>';
+                }).join('');
+                dd.style.display = 'block';
+            } else {
+                dd.style.display = 'none';
+            }
+        }
+
+        function showStoreProfile(storeId) {
+            var dd = document.getElementById('studios-dropdown');
+            if (dd) dd.style.display = 'none';
+            var store = storeDataGlobal.find(function(s) { return s.store_id === storeId; });
+            if (!store) return;
+            var prof = document.getElementById('studios-profile');
+            prof.style.display = 'block';
+            prof.innerHTML =
+                '<div class="hq-section">' +
+                '<h2 class="hq-section-heading">' + store.name + '</h2>' +
+                '<div class="hq-studios-profile-grid">' +
+                '<div><span class="hq-summary-label">STORE NUMBER</span><div>' + store.store_id + '</div></div>' +
+                '<div><span class="hq-summary-label">TIMEZONE</span><div>' + store.timezone + '</div></div>' +
+                '<div><span class="hq-summary-label">USERNAME</span><div>' + store.username + '</div></div>' +
+                '<div><span class="hq-summary-label">EMAIL</span><div>' + (store.email || '—') + '</div></div>' +
+                '</div>' +
+                '<h3 class="hq-subsection-heading" style="margin-top:24px;">Edit Credentials</h3>' +
+                '<div class="hq-studios-cred-form">' +
+                '<input type="text" id="cred-username" class="hq-input" value="' + store.username + '" placeholder="Username" style="width:160px;">' +
+                '<input type="password" id="cred-password" class="hq-input" placeholder="New password" style="width:160px;">' +
+                '<button class="hq-btn hq-btn-lavender" onclick="saveCredentials(\'' + store.store_id + '\')" style="height:32px;font-size:11px;padding:0 14px;">SAVE</button>' +
+                '<span id="cred-status" class="hq-muted-text"></span>' +
+                '</div>' +
+                '<h3 class="hq-subsection-heading" style="margin-top:24px;">Store Analytics</h3>' +
+                '<p class="hq-muted-text">Coming soon.</p>' +
+                '</div>';
+        }
+
+        function saveCredentials(storeId) {
+            var username = document.getElementById('cred-username').value.trim();
+            var password = document.getElementById('cred-password').value.trim();
+            if (!username) return;
+            fetch('/hq/studios/update-credentials', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({store_id: storeId, username: username, password: password})
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.ok) {
+                    document.getElementById('cred-status').textContent = 'Saved';
+                    // Update local data
+                    var store = storeDataGlobal.find(function(s) { return s.store_id === storeId; });
+                    if (store) store.username = username;
+                    setTimeout(function() {
+                        var el = document.getElementById('cred-status');
+                        if (el) el.textContent = '';
+                    }, 2000);
+                }
+            })
+            .catch(function(err) {
+                document.getElementById('cred-status').textContent = 'Error saving';
+            });
+        }
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.section) {
+                loadSection(e.state.section);
+            }
+        });
+
+        // Initial load
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var section = params.get('section') || 'dashboard';
+            loadSection(section);
+        })();
+    </script>
+</body>
+</html>

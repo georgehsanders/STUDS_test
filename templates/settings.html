@@ -7,20 +7,30 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body class="hq-body">
-    <header class="hq-header">
-        <div class="hq-header-left">
-            <a href="/hq/" class="hq-logotype hq-logo">STUDS</a>
-            <span class="hq-header-rule"></span>
-            <span class="hq-header-label">HQ</span>
-            <span class="hq-header-rule"></span>
-            <span class="hq-header-label">CONFIDENTIAL</span>
+    <header class="hq-spa-header">
+        <div class="hq-zone1">
+            <div class="hq-zone1-left">
+                <span class="hq-portal-link hq-portal-current">HQ</span>
+                <a href="/hq/goto-studio" class="hq-portal-link">STUDIO</a>
+                <a href="/hq/logout" class="hq-portal-link">LOGOUT</a>
+            </div>
+            <div class="hq-logo-block">
+                <a href="/hq/" class="hq-spa-logotype" style="text-decoration:none;color:#1a1a1a;">STUDS</a>
+                <span class="hq-spa-confidential">CONFIDENTIAL</span>
+            </div>
+            <div class="hq-zone1-right">
+                <a href="/hq/upload" class="hq-portal-link">UPLOAD</a>
+                <span class="hq-portal-link hq-portal-current">SETTINGS</span>
+            </div>
         </div>
-        <div class="hq-header-right">
-            <a href="/hq/" class="hq-nav-link">DASHBOARD</a>
-            <a href="/hq/upload" class="hq-nav-link">UPLOAD</a>
-            <a href="/hq/database" class="hq-nav-link">DATABASE</a>
-            <a href="/hq/analytics" class="hq-nav-link">ANALYTICS</a>
-            <a href="/hq/logout" class="hq-nav-link">LOGOUT</a>
+        <div class="hq-header-divider"></div>
+        <div class="hq-zone2">
+            <div class="hq-zone2-left">
+                <a href="/hq/" class="hq-section-link">DASHBOARD</a>
+                <a href="/hq/?section=analytics" class="hq-section-link">ANALYTICS</a>
+                <a href="/hq/?section=database" class="hq-section-link">DATABASE</a>
+                <a href="/hq/?section=studios" class="hq-section-link">STUDIOS</a>
+            </div>
         </div>
     </header>
 

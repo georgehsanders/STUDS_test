@@ -1,0 +1,32 @@
+<div class="hq-studios">
+    <div class="hq-studios-search-wrap">
+        <input type="text" id="studios-search" class="hq-studios-search" placeholder="Search by studio name or number..." oninput="filterStudios()" autocomplete="off">
+        <div id="studios-dropdown" class="hq-studios-dropdown" style="display:none;"></div>
+    </div>
+
+    <div id="studios-profile" class="hq-studios-profile" style="display:none;"></div>
+
+    <div id="studios-list" class="hq-section" style="margin-top:24px;">
+        <h2 class="hq-section-heading">All Studios</h2>
+        <table class="hq-table">
+            <thead>
+                <tr>
+                    <th>Store</th>
+                    <th>Timezone</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody id="studios-tbody">
+                {% for store in db_stores %}
+                <tr class="hq-store-row hq-studios-row" data-sid="{{ store.store_id }}" data-name="{{ store.name|lower }}" onclick="showStoreProfile('{{ store.store_id }}')">
+                    <td>{{ store.name }}</td>
+                    <td>{{ store.timezone }}</td>
+                    <td>{{ store.username }}</td>
+                    <td>{{ store.email or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDS — Archive</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="hq-body">
+    <header class="hq-spa-header">
+        <div class="hq-zone1">
+            <div class="hq-zone1-left">
+                <span class="hq-portal-link hq-portal-current">HQ</span>
+                <a href="/hq/logout" class="hq-portal-link">LOGOUT</a>
+            </div>
+            <div class="hq-logo-block">
+                <a href="/hq/" class="hq-spa-logotype" style="text-decoration:none;color:#1a1a1a;">STUDS</a>
+                <span class="hq-spa-confidential">CONFIDENTIAL</span>
+            </div>
+            <div class="hq-zone1-right">
+                <a href="/hq/" class="hq-portal-link">BACK TO HQ</a>
+            </div>
+        </div>
+        <div class="hq-header-divider"></div>
+    </header>
+
+    <div class="hq-page-content">
+        <div class="hq-section">
+            <h2 class="hq-section-heading">Archive Browser</h2>
+            <p class="hq-help-text">Recent file archives (most recent 50).</p>
+            {% if archives %}
+            <table class="hq-table">
+                <thead>
+                    <tr>
+                        <th>File Type</th>
+                        <th>Original Filename</th>
+                        <th>Store</th>
+                        <th>Archived At</th>
+                        <th>Row Count</th>
+                        <th>Size</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in archives %}
+                    <tr>
+                        <td>{{ a.file_type }}</td>
+                        <td>{{ a.original_filename }}</td>
+                        <td>{{ a.store_id or '—' }}</td>
+                        <td>{{ a.archived_at }}</td>
+                        <td>{{ a.row_count }}</td>
+                        <td>{{ (a.file_size_bytes / 1024)|round(1) }} KB</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="hq-no-disc">No archived files yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

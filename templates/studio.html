@@ -24,6 +24,9 @@
             {% if not no_sku_list %}
             <button class="studio-btn-print" onclick="handlePrint()">PRINT</button>
             {% endif %}
+            {% if session.get('is_admin') %}
+            <a href="/studio/goto-hq" class="studio-nav-link">HQ</a>
+            {% endif %}
             <a href="/studio/logout" class="studio-nav-link">LOGOUT</a>
         </div>
     </header>

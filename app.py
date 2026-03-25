@@ -785,6 +785,14 @@ def studio_logout():
     return redirect(url_for('landing'))
 
 
+@app.route('/studio/goto-hq')
+@studio_login_required
+def studio_goto_hq():
+    session['hq_logged_in'] = True
+    session['is_admin'] = True
+    return redirect(url_for('hq_index'))
+
+
 @app.route('/database/images/<filename>')
 def serve_image(filename):
     return send_from_directory(IMAGES_DIR, filename)
@@ -857,8 +865,8 @@ def hq_logout():
 @hq_login_required
 def hq_index():
     results = run_reconciliation()
-    settings = load_settings()
-    return render_template('index.html', data=results, settings=settings)
+    db_stores = get_all_stores_db()
+    return render_template('hq_shell.html', data=results, db_stores=db_stores)
 
 
 @app.route('/hq/refresh', methods=['POST'])
@@ -866,6 +874,126 @@ def hq_index():
 def hq_refresh():
     results = run_reconciliation()
     return jsonify(results)
+
+
+# --- SPA section fragment routes ---
+
+@app.route('/hq/section/dashboard')
+@hq_login_required
+def hq_section_dashboard():
+    results = run_reconciliation()
+    return render_template('fragments/dashboard.html', data=results, settings=load_settings())
+
+
+@app.route('/hq/section/analytics')
+@hq_login_required
+def hq_section_analytics():
+    return render_template('fragments/analytics.html')
+
+
+@app.route('/hq/section/database')
+@hq_login_required
+def hq_section_database():
+    msf_path = os.path.join(MASTER_DIR, 'SKU_Master.csv')
+    msf_rows = 0
+    msf_updated = 'N/A'
+    if os.path.isfile(msf_path):
+        msf_rows = len(load_master_skus())
+        msf_updated = datetime.fromtimestamp(os.path.getmtime(msf_path)).strftime('%Y-%m-%d %H:%M:%S')
+    image_count = 0
+    if os.path.isdir(IMAGES_DIR):
+        image_count = len([f for f in os.listdir(IMAGES_DIR) if os.path.isfile(os.path.join(IMAGES_DIR, f))])
+    conn = get_archive_db()
+    orphaned = [dict(r) for r in conn.execute(
+        "SELECT * FROM image_flags WHERE flag_type = 'orphaned_image' AND status = 'unresolved' ORDER BY image_filename"
+    ).fetchall()]
+    missing = [dict(r) for r in conn.execute(
+        "SELECT * FROM image_flags WHERE flag_type = 'missing_image' AND status = 'unresolved' ORDER BY sku"
+    ).fetchall()]
+    conn.close()
+    master = load_master_skus()
+    for m in missing:
+        m['description'] = master.get(m['sku'], '')
+    return render_template('fragments/database.html',
+                           msf_rows=msf_rows, msf_updated=msf_updated,
+                           image_count=image_count, orphaned=orphaned, missing=missing)
+
+
+@app.route('/hq/section/studios')
+@hq_login_required
+def hq_section_studios():
+    db_stores = get_all_stores_db()
+    return render_template('fragments/studios.html', db_stores=db_stores)
+
+
+@app.route('/hq/database/upload-msf', methods=['POST'])
+@hq_login_required
+def hq_database_upload_msf():
+    msf_path = os.path.join(MASTER_DIR, 'SKU_Master.csv')
+    f = request.files.get('msf_file')
+    if f and f.filename:
+        archive_file_if_exists(msf_path, 'master_sku')
+        os.makedirs(MASTER_DIR, exist_ok=True)
+        f.save(msf_path)
+        run_image_sku_audit()
+        flash('Master SKU file updated.', 'success')
+    return redirect('/hq/?section=database')
+
+
+@app.route('/hq/database/upload-images', methods=['POST'])
+@hq_login_required
+def hq_database_upload_images():
+    img_files = request.files.getlist('image_files')
+    count = 0
+    os.makedirs(IMAGES_DIR, exist_ok=True)
+    for f in img_files:
+        if f.filename:
+            f.save(os.path.join(IMAGES_DIR, f.filename))
+            count += 1
+    if count:
+        run_image_sku_audit()
+        flash(f'{count} images uploaded.', 'success')
+    return redirect('/hq/?section=database')
+
+
+@app.route('/hq/studios/update-credentials', methods=['POST'])
+@hq_login_required
+def hq_studios_update_credentials():
+    data = request.get_json()
+    store_id = data.get('store_id', '')
+    username = data.get('username', '').strip()
+    password = data.get('password', '').strip()
+    if store_id and username:
+        conn = get_db()
+        conn.execute('UPDATE stores SET username = ?, updated_at = CURRENT_TIMESTAMP WHERE store_id = ?',
+                     (username, store_id))
+        if password:
+            pw_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            conn.execute('UPDATE stores SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE store_id = ?',
+                         (pw_hash, store_id))
+        conn.commit()
+        conn.close()
+        return jsonify({'ok': True})
+    return jsonify({'ok': False}), 400
+
+
+@app.route('/hq/goto-studio')
+@hq_login_required
+def hq_goto_studio():
+    session['studio_logged_in'] = True
+    session['is_admin'] = True
+    return redirect(url_for('studio_index'))
+
+
+@app.route('/hq/archive')
+@hq_login_required
+def hq_archive():
+    conn = get_archive_db()
+    archives = [dict(r) for r in conn.execute(
+        "SELECT id, file_type, original_filename, store_id, archived_at, row_count, file_size_bytes FROM archive_files ORDER BY archived_at DESC LIMIT 50"
+    ).fetchall()]
+    conn.close()
+    return render_template('archive.html', archives=archives)
 
 
 @app.route('/hq/upload', methods=['GET', 'POST'])
