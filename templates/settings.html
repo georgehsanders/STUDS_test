@@ -36,19 +36,34 @@
 
         <form method="POST">
             <div class="hq-section">
-                <h2 class="hq-section-heading">Change Studio Password</h2>
-                <p class="hq-help-text">Update the Studio portal login password. Leave blank to keep the current password.</p>
-                <div style="max-width: 360px;">
-                    <input type="password" name="new_studio_password" class="hq-input" placeholder="Enter new Studio password" autocomplete="new-password">
-                </div>
-            </div>
-
-            <div class="hq-section">
-                <h2 class="hq-section-heading">Change HQ Password</h2>
-                <p class="hq-help-text">Update the HQ portal login password. Leave blank to keep the current password.</p>
-                <div style="max-width: 360px;">
-                    <input type="password" name="new_hq_password" class="hq-input" placeholder="Enter new HQ password" autocomplete="new-password">
-                </div>
+                <h2 class="hq-section-heading">Store Login Credentials</h2>
+                <p class="hq-help-text">Manage usernames and passwords for each store's Studio portal login. Leave password blank to keep current.</p>
+                <table class="hq-table">
+                    <thead>
+                        <tr>
+                            <th>Store</th>
+                            <th>Username</th>
+                            <th>New Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for store in db_stores %}
+                        <tr>
+                            <td>{{ store.name }}</td>
+                            <td>
+                                <input type="text" name="store_username_{{ store.store_id }}"
+                                       value="{{ store.username }}"
+                                       class="hq-input" autocomplete="off">
+                            </td>
+                            <td>
+                                <input type="password" name="store_password_{{ store.store_id }}"
+                                       placeholder="Leave blank to keep"
+                                       class="hq-input" autocomplete="new-password">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
             <div class="hq-section">

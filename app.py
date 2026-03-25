@@ -3,16 +3,19 @@ import re
 import csv
 import io
 import json
+import sqlite3
 from datetime import datetime
 from functools import wraps
+import bcrypt
+import pytz
 from flask import (Flask, render_template, jsonify, request, redirect,
                    url_for, session, send_file, send_from_directory, flash)
 
 app = Flask(__name__)
 
-# --- Password protection ---
-DEFAULT_STUDIO_PASSWORD = 'studio26'
-DEFAULT_HQ_PASSWORD = 'hq26'
+# --- Authentication ---
+ADMIN_USERNAME = 'hq'
+ADMIN_PASSWORD = 'hq'
 app.secret_key = 'studs-secret-key-change-in-production'
 
 INPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'input')
@@ -21,6 +24,7 @@ SETTINGS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'settin
 DATABASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database')
 MASTER_DIR = os.path.join(DATABASE_DIR, 'master')
 IMAGES_DIR = os.path.join(DATABASE_DIR, 'images')
+STORE_DB = os.path.join(DATABASE_DIR, 'store_profiles.db')
 
 # --- Status constants ---
 STATUS_UPDATED = "Updated"
@@ -54,6 +58,122 @@ def is_excluded_sku(sku):
     return bool(RE_RS_PREFIX.match(sku))
 
 
+# --- Store profiles database ---
+
+SEED_STORES = [
+    ("001", "001 NY SoHo", "America/New_York"),
+    ("002", "002 NY Williamsburg", "America/New_York"),
+    ("003", "003 NY Upper East Side", "America/New_York"),
+    ("004", "004 NY Hudson Yards", "America/New_York"),
+    ("005", "005 NY Flatiron", "America/New_York"),
+    ("006", "006 NJ Garden State Plaza", "America/New_York"),
+    ("007", "007 NJ Short Hills", "America/New_York"),
+    ("008", "008 CT Westfield", "America/New_York"),
+    ("009", "009 MA Newbury Street", "America/New_York"),
+    ("010", "010 MA Burlington", "America/New_York"),
+    ("011", "011 PA King of Prussia", "America/New_York"),
+    ("012", "012 PA Rittenhouse", "America/New_York"),
+    ("013", "013 DC Georgetown", "America/New_York"),
+    ("014", "014 FL Aventura", "America/New_York"),
+    ("015", "015 FL Dadeland", "America/New_York"),
+    ("016", "016 FL Sawgrass", "America/New_York"),
+    ("017", "017 FL International Plaza", "America/New_York"),
+    ("018", "018 GA Lenox Square", "America/New_York"),
+    ("019", "019 GA Avalon", "America/New_York"),
+    ("020", "020 TX NorthPark", "America/Chicago"),
+    ("021", "021 TX Domain", "America/Chicago"),
+    ("022", "022 TX Galleria", "America/Chicago"),
+    ("023", "023 IL Michigan Ave", "America/Chicago"),
+    ("024", "024 IL Oakbrook", "America/Chicago"),
+    ("025", "025 MN Mall of America", "America/Chicago"),
+    ("026", "026 CO Cherry Creek", "America/Denver"),
+    ("027", "027 CO Park Meadows", "America/Denver"),
+    ("028", "028 AZ Scottsdale Fashion", "America/Phoenix"),
+    ("029", "029 AZ Biltmore", "America/Phoenix"),
+    ("030", "030 NV Fashion Show", "America/Los_Angeles"),
+    ("031", "031 CA Beverly Center", "America/Los_Angeles"),
+    ("032", "032 CA Century City", "America/Los_Angeles"),
+    ("033", "033 CA Fashion Island", "America/Los_Angeles"),
+    ("034", "034 CA Stanford", "America/Los_Angeles"),
+    ("035", "035 CA UTC San Diego", "America/Los_Angeles"),
+    ("036", "036 CA Santa Monica", "America/Los_Angeles"),
+    ("037", "037 WA Bellevue Square", "America/Los_Angeles"),
+    ("038", "038 WA University Village", "America/Los_Angeles"),
+    ("039", "039 OR Pioneer Place", "America/Los_Angeles"),
+    ("040", "040 HI Ala Moana", "Pacific/Honolulu"),
+]
+
+
+def get_db():
+    """Get a SQLite connection to the store profiles database."""
+    conn = sqlite3.connect(STORE_DB)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_store_db():
+    """Create and seed the store profiles database if it doesn't exist."""
+    if os.path.exists(STORE_DB):
+        return
+    os.makedirs(DATABASE_DIR, exist_ok=True)
+    conn = sqlite3.connect(STORE_DB)
+    conn.execute('''CREATE TABLE IF NOT EXISTS stores (
+        store_id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        timezone TEXT NOT NULL,
+        username TEXT NOT NULL,
+        password_hash TEXT NOT NULL,
+        email TEXT DEFAULT '',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+    for store_id, name, tz in SEED_STORES:
+        pw_hash = bcrypt.hashpw(store_id.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        conn.execute(
+            'INSERT OR IGNORE INTO stores (store_id, name, timezone, username, password_hash) VALUES (?, ?, ?, ?, ?)',
+            (store_id, name, tz, store_id, pw_hash)
+        )
+    conn.commit()
+    conn.close()
+
+
+def get_store_by_username(username):
+    """Look up a store by username. Returns a dict or None."""
+    conn = get_db()
+    row = conn.execute('SELECT * FROM stores WHERE username = ?', (username,)).fetchone()
+    conn.close()
+    if row:
+        return dict(row)
+    return None
+
+
+def get_all_stores_db():
+    """Return all stores from the database as a list of dicts."""
+    conn = get_db()
+    rows = conn.execute('SELECT * FROM stores ORDER BY store_id').fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def check_password(stored_hash, password):
+    """Verify a password against a bcrypt hash."""
+    return bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
+
+
+def is_studio_locked(timezone_str):
+    """Check if the Studio portal is locked for the given timezone.
+    Locked Friday (4) through Sunday (6). Returns True if locked."""
+    settings = load_settings()
+    if not settings.get('feature_studio_lockout', True):
+        return False
+    try:
+        tz = pytz.timezone(timezone_str)
+    except pytz.exceptions.UnknownTimeZoneError:
+        return False
+    now = datetime.now(tz)
+    return now.weekday() >= 4  # 4=Friday, 5=Saturday, 6=Sunday
+
+
 def studio_login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -77,8 +197,7 @@ def load_settings():
     defaults = {
         'email_body_template': DEFAULT_EMAIL_BODY,
         'store_emails': {},
-        'studio_password': DEFAULT_STUDIO_PASSWORD,
-        'hq_password': DEFAULT_HQ_PASSWORD,
+        'feature_studio_lockout': True,
     }
     if os.path.exists(SETTINGS_FILE):
         try:
@@ -513,12 +632,24 @@ def landing():
 @app.route('/studio/login', methods=['GET', 'POST'])
 def studio_login():
     if request.method == 'POST':
-        settings = load_settings()
-        if request.form.get('password', '').strip() == settings.get('studio_password', DEFAULT_STUDIO_PASSWORD):
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
+        # Check admin credentials first (bypass lockout)
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session['studio_logged_in'] = True
+            session['is_admin'] = True
             return redirect(url_for('studio_index'))
+        # Look up store
+        store = get_store_by_username(username)
+        if not store or not check_password(store['password_hash'], password):
+            flash('Incorrect username or password.', 'error')
+        elif is_studio_locked(store['timezone']):
+            flash('Sorry, stud! The new SKU list will be available Monday.', 'lockout')
         else:
-            flash('Incorrect password.', 'error')
+            session['studio_logged_in'] = True
+            session['store_id'] = store['store_id']
+            session['is_admin'] = False
+            return redirect(url_for('studio_index'))
     return render_template('studio_login.html')
 
 
@@ -579,12 +710,14 @@ def studio_index():
 @app.route('/hq/login', methods=['GET', 'POST'])
 def hq_login():
     if request.method == 'POST':
-        settings = load_settings()
-        if request.form.get('password', '').strip() == settings.get('hq_password', DEFAULT_HQ_PASSWORD):
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session['hq_logged_in'] = True
+            session['is_admin'] = True
             return redirect(url_for('hq_index'))
         else:
-            flash('Incorrect password.', 'error')
+            flash('Incorrect username or password.', 'error')
     return render_template('hq_login.html')
 
 
@@ -676,16 +809,6 @@ def hq_settings_page():
     settings = load_settings()
     if request.method == 'POST':
         settings['email_body_template'] = request.form.get('email_body_template', DEFAULT_EMAIL_BODY)
-        # Handle password changes
-        password_changed = False
-        new_studio_password = request.form.get('new_studio_password', '').strip()
-        if new_studio_password:
-            settings['studio_password'] = new_studio_password
-            password_changed = True
-        new_hq_password = request.form.get('new_hq_password', '').strip()
-        if new_hq_password:
-            settings['hq_password'] = new_hq_password
-            password_changed = True
         # Save per-store emails
         store_emails = {}
         for key, val in request.form.items():
@@ -694,15 +817,37 @@ def hq_settings_page():
                 store_emails[store_id] = val.strip()
         settings['store_emails'] = store_emails
         save_settings(settings)
-        if password_changed:
-            flash('Settings saved. Password(s) have been updated — use the new password on next login.', 'success')
+        # Handle store credential updates
+        cred_updated = False
+        conn = get_db()
+        for key, val in request.form.items():
+            if key.startswith('store_username_'):
+                store_id = key.replace('store_username_', '')
+                new_username = val.strip()
+                if new_username:
+                    conn.execute('UPDATE stores SET username = ?, updated_at = CURRENT_TIMESTAMP WHERE store_id = ?',
+                                 (new_username, store_id))
+                    cred_updated = True
+            if key.startswith('store_password_'):
+                store_id = key.replace('store_password_', '')
+                new_pw = val.strip()
+                if new_pw:
+                    pw_hash = bcrypt.hashpw(new_pw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                    conn.execute('UPDATE stores SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE store_id = ?',
+                                 (pw_hash, store_id))
+                    cred_updated = True
+        conn.commit()
+        conn.close()
+        if cred_updated:
+            flash('Settings saved. Store credentials have been updated.', 'success')
         else:
             flash('Settings saved.', 'success')
         return redirect(url_for('hq_settings_page'))
 
     # Get all store IDs for email configuration
     results = run_reconciliation()
-    return render_template('settings.html', settings=settings, stores=results['stores'])
+    db_stores = get_all_stores_db()
+    return render_template('settings.html', settings=settings, stores=results['stores'], db_stores=db_stores)
 
 
 @app.route('/hq/email-draft/<store_id>')
@@ -796,6 +941,8 @@ def hq_export_csv():
         download_name=f'STUDS_Dashboard_Export_{timestamp}.csv',
     )
 
+
+init_store_db()
 
 if __name__ == '__main__':
     os.makedirs(INPUT_DIR, exist_ok=True)

@@ -422,6 +422,12 @@ header h1 {
     margin-bottom: 30px;
 }
 
+.warning-lockout {
+    background: #c8f135;
+    border: 1px solid #000000;
+    color: #000000;
+}
+
 /* Upload page */
 .upload-section {
     background: #fff;
