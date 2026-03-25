@@ -29,23 +29,23 @@
         <div class="hq-summary-label">Incomplete</div>
         <div class="hq-summary-value" id="count-incomplete">{{ data.count_incomplete }}</div>
     </div>
-    <div class="hq-summary-cell hq-summary-info-block">
+    <div class="hq-summary-info-block">
         <div class="hq-info-row">
-            <div class="hq-summary-label">File</div>
-            <div class="hq-summary-value-sm" id="sku-list-name">{{ data.sku_list_filename or 'None' }}</div>
+            <span class="hq-info-label">FILE:</span>
+            <span class="hq-info-value" id="sku-list-name">{{ data.sku_list_filename or '—' }}</span>
         </div>
         <div class="hq-info-row">
-            <div class="hq-summary-label">SKUs</div>
-            <div class="hq-summary-value-sm" id="sku-count">{{ data.sku_count }}</div>
+            <span class="hq-info-label">SKUs:</span>
+            <span class="hq-info-value" id="sku-count">{{ data.sku_count or '—' }}</span>
         </div>
         <div class="hq-info-row">
-            <div class="hq-summary-label">Range</div>
-            <div class="hq-summary-value-sm" id="audit-range">{% if data.audit_date_min %}{{ data.audit_date_min[:10] }} &rarr; {{ data.audit_date_max[:10] }}{% else %}N/A{% endif %}</div>
+            <span class="hq-info-label">RANGE:</span>
+            <span class="hq-info-value" id="audit-range">{% if data.audit_date_min and data.audit_date_max %}{{ data.audit_date_min[:10] }} &rarr; {{ data.audit_date_max[:10] }}{% else %}—{% endif %}</span>
         </div>
     </div>
 </div>
 
-<div class="hq-controls">
+<div class="hq-controls-row">
     <label class="hq-control-label">Filter
         <select id="filter-status" class="hq-select" onchange="applyFilters()">
             <option value="all">All</option>

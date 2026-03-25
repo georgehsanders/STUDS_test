@@ -24,13 +24,12 @@
                 <nav class="hq-z1-right">
                     <span class="hq-portal-link hq-current">FILES</span>
                     <span class="hq-pipe">|</span>
+                    <a href="/hq/?section=dashboard" class="hq-portal-link">REFRESH</a>
+                    <span class="hq-pipe">|</span>
                     <a href="/hq/settings" class="hq-portal-link">SETTINGS</a>
                 </nav>
             </div>
-            <div class="hq-z1-bottom">
-                <div class="hq-z1-bottom-left"></div>
-                <div class="hq-z1-bottom-right"></div>
-            </div>
+            <div class="hq-z1-bottom"><div class="hq-z1-bottom-left"></div><div class="hq-z1-bottom-right"></div></div>
         </div>
         <hr class="hq-header-rule">
         <div class="hq-zone2">
@@ -69,65 +68,131 @@
             </form>
         </div>
 
+        <div class="hq-controls-row">
+            <label class="hq-control-label">Filter
+                <select id="file-filter" class="hq-select" onchange="filterFiles()">
+                    <option value="all">All</option>
+                    <option value="sku_list">SKU List</option>
+                    <option value="audit_trail">Audit Trail</option>
+                    <option value="variance">Variance</option>
+                </select>
+            </label>
+            <label class="hq-control-label">Sort
+                <select id="file-sort" class="hq-select" onchange="sortFiles()">
+                    <option value="name-asc">Name (A→Z)</option>
+                    <option value="name-desc">Name (Z→A)</option>
+                    <option value="date-desc">Date (Newest)</option>
+                    <option value="date-asc">Date (Oldest)</option>
+                    <option value="size-desc">Size (Largest)</option>
+                    <option value="size-asc">Size (Smallest)</option>
+                </select>
+            </label>
+        </div>
+
+        {% if global_files %}
         <div class="hq-section">
-            <h2 class="hq-section-heading">Current Files in /input/</h2>
-            {% if files %}
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-                <button type="button" class="hq-btn hq-btn-outline" onclick="toggleSelectMode();" id="select-mode-btn">SELECT FILES</button>
+                <h2 class="hq-section-heading" style="margin-bottom:0;">Global Files</h2>
                 <form method="POST" action="/hq/delete-all-files" style="margin:0;">
                     <button type="submit" class="hq-btn hq-btn-outline" onclick="return confirm('Delete all files?')">DELETE ALL</button>
                 </form>
             </div>
-            <form id="bulk-form" method="POST">
-                <table class="hq-table">
-                    <thead>
-                        <tr>
-                            <th class="hq-select-col" style="display:none;width:30px;"><input type="checkbox" id="select-all" onchange="toggleSelectAll(this);"></th>
-                            <th>File Name</th>
-                            <th>Last Modified</th>
-                            <th>Size</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for f in files %}
-                        <tr>
-                            <td class="hq-select-col" style="display:none;"><input type="checkbox" name="filenames" value="{{ f.name }}" class="file-cb"></td>
-                            <td>{{ f.name }}</td>
-                            <td>{{ f.modified }}</td>
-                            <td>{{ f.size }}</td>
-                            <td style="white-space:nowrap;">
-                                <a href="/hq/download-file?filename={{ f.name }}" class="hq-btn-delete hq-btn-download" style="margin-right:4px;">DOWNLOAD</a>
-                                <form method="POST" action="/hq/delete-file" style="display:inline;margin:0;">
-                                    <input type="hidden" name="filename" value="{{ f.name }}">
-                                    <button type="submit" class="hq-btn-delete" onclick="return confirm('Delete {{ f.name }}?')">DELETE</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div id="bulk-actions" style="display:none;margin-top:12px;">
-                    <button type="submit" formaction="/hq/download-selected" class="hq-btn hq-btn-outline">DOWNLOAD SELECTED</button>
-                    <button type="submit" formaction="/hq/delete-selected" class="hq-btn hq-btn-outline" onclick="return confirm('Delete selected files?')">DELETE SELECTED</button>
-                </div>
-            </form>
-            {% else %}
-            <p class="hq-no-disc">No files found in /input/.</p>
-            {% endif %}
+            <table class="hq-table" id="global-table">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Last Modified</th>
+                        <th>Size</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in global_files %}
+                    <tr class="file-row" data-type="{{ f.type }}" data-name="{{ f.name|lower }}" data-date="{{ f.modified }}" data-size="{{ f.size }}">
+                        <td>{{ f.name }}</td>
+                        <td>{{ f.modified }}</td>
+                        <td>{{ f.size }}</td>
+                        <td style="white-space:nowrap;">
+                            <a href="/hq/download-file?filename={{ f.name }}" class="hq-btn-delete hq-btn-download">DOWNLOAD</a>
+                            <form method="POST" action="/hq/delete-file" style="display:inline;margin:0;">
+                                <input type="hidden" name="filename" value="{{ f.name }}">
+                                <button type="submit" class="hq-btn-delete" onclick="return confirm('Delete {{ f.name }}?')">DELETE</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% endif %}
+
+        {% if variance_files %}
+        <div class="hq-section">
+            <h2 class="hq-section-heading">Variance Files</h2>
+            <table class="hq-table" id="variance-table">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Last Modified</th>
+                        <th>Size</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in variance_files %}
+                    <tr class="file-row" data-type="{{ f.type }}" data-name="{{ f.name|lower }}" data-date="{{ f.modified }}" data-size="{{ f.size }}">
+                        <td>{{ f.name }}</td>
+                        <td>{{ f.modified }}</td>
+                        <td>{{ f.size }}</td>
+                        <td style="white-space:nowrap;">
+                            <a href="/hq/download-file?filename={{ f.name }}" class="hq-btn-delete hq-btn-download">DOWNLOAD</a>
+                            <form method="POST" action="/hq/delete-file" style="display:inline;margin:0;">
+                                <input type="hidden" name="filename" value="{{ f.name }}">
+                                <button type="submit" class="hq-btn-delete" onclick="return confirm('Delete {{ f.name }}?')">DELETE</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if not global_files and not variance_files %}
+        <p class="hq-no-disc">No files found in /input/.</p>
+        {% endif %}
     </div>
 
     <script>
-        var selectMode = false;
-        function toggleSelectMode() {
-            selectMode = !selectMode;
-            document.querySelectorAll('.hq-select-col').forEach(function(el) { el.style.display = selectMode ? '' : 'none'; });
-            document.getElementById('bulk-actions').style.display = selectMode ? 'flex' : 'none';
-            document.getElementById('select-mode-btn').textContent = selectMode ? 'CANCEL SELECT' : 'SELECT FILES';
-            if (!selectMode) { document.getElementById('select-all').checked = false; document.querySelectorAll('.file-cb').forEach(function(cb) { cb.checked = false; }); }
+        function filterFiles() {
+            var val = document.getElementById('file-filter').value;
+            document.querySelectorAll('.file-row').forEach(function(row) {
+                if (val === 'all' || row.dataset.type === val) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
         }
-        function toggleSelectAll(m) { document.querySelectorAll('.file-cb').forEach(function(cb) { cb.checked = m.checked; }); }
+        function sortFiles() {
+            var val = document.getElementById('file-sort').value;
+            ['global-table', 'variance-table'].forEach(function(tid) {
+                var table = document.getElementById(tid);
+                if (!table) return;
+                var tbody = table.querySelector('tbody');
+                var rows = Array.from(tbody.querySelectorAll('.file-row'));
+                rows.sort(function(a, b) {
+                    if (val === 'name-asc') return a.dataset.name.localeCompare(b.dataset.name);
+                    if (val === 'name-desc') return b.dataset.name.localeCompare(a.dataset.name);
+                    if (val === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+                    if (val === 'date-asc') return a.dataset.date.localeCompare(b.dataset.date);
+                    if (val === 'size-desc') return parseFloat(b.dataset.size) - parseFloat(a.dataset.size);
+                    if (val === 'size-asc') return parseFloat(a.dataset.size) - parseFloat(b.dataset.size);
+                    return 0;
+                });
+                rows.forEach(function(row) { tbody.appendChild(row); });
+            });
+        }
     </script>
 </body>
 </html>

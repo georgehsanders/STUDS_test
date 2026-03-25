@@ -1096,19 +1096,32 @@ def hq_upload():
         return redirect(url_for('hq_upload'))
 
     # List current files in /input/
-    current_files = []
+    global_files = []
+    variance_files = []
     if os.path.isdir(INPUT_DIR):
         for fname in sorted(os.listdir(INPUT_DIR)):
             fpath = os.path.join(INPUT_DIR, fname)
             if os.path.isfile(fpath):
                 mtime = datetime.fromtimestamp(os.path.getmtime(fpath))
                 size_kb = os.path.getsize(fpath) / 1024
-                current_files.append({
+                finfo = {
                     'name': fname,
                     'modified': mtime.strftime('%Y-%m-%d %H:%M:%S'),
                     'size': f'{size_kb:.1f} KB',
-                })
-    return render_template('upload.html', files=current_files)
+                    'type': 'other',
+                }
+                if RE_SKU_LIST.match(fname):
+                    finfo['type'] = 'sku_list'
+                    global_files.append(finfo)
+                elif RE_AUDIT_TRAIL.match(fname):
+                    finfo['type'] = 'audit_trail'
+                    global_files.append(finfo)
+                elif RE_VARIANCE.match(fname):
+                    finfo['type'] = 'variance'
+                    variance_files.append(finfo)
+                else:
+                    global_files.append(finfo)
+    return render_template('upload.html', global_files=global_files, variance_files=variance_files)
 
 
 @app.route('/hq/delete-file', methods=['POST'])
