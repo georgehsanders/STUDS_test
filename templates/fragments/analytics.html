@@ -1,3 +1,4 @@
+{% from "macros.html" import sortable_th %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 function scrollToSection(id) {
@@ -69,11 +70,11 @@ function scrollToSection(id) {
     <table class="hq-table" id="leaderboard-table">
         <thead>
             <tr>
-                <th style="width:50px;" class="sortable-col" onclick="sortTable('leaderboard-table',0,'number')">Rank</th>
-                <th class="sortable-col" onclick="sortTable('leaderboard-table',1,'string')">Studio</th>
-                <th class="sortable-col" onclick="sortTable('leaderboard-table',2,'percent')">Compliance Rate</th>
-                <th class="sortable-col" onclick="sortTable('leaderboard-table',3,'number')">Avg Lag</th>
-                <th class="sortable-col" onclick="sortTable('leaderboard-table',4,'number')">Discrepancy Units</th>
+                {{ sortable_th('leaderboard-table', 0, 'number', 'Rank', style='width:50px;') }}
+                {{ sortable_th('leaderboard-table', 1, 'string', 'Studio') }}
+                {{ sortable_th('leaderboard-table', 2, 'percent', 'Compliance Rate') }}
+                {{ sortable_th('leaderboard-table', 3, 'number', 'Avg Lag') }}
+                {{ sortable_th('leaderboard-table', 4, 'number', 'Discrepancy Units') }}
                 <th>Trend</th>
             </tr>
         </thead>
@@ -102,11 +103,11 @@ function scrollToSection(id) {
     <table class="hq-table" id="skus-table">
         <thead>
             <tr>
-                <th class="sortable-col" onclick="sortTable('skus-table',0,'string')">SKU</th>
-                <th class="sortable-col" onclick="sortTable('skus-table',1,'string')">Description</th>
-                <th class="sortable-col" onclick="sortTable('skus-table',2,'number')">Total Units</th>
-                <th class="sortable-col" onclick="sortTable('skus-table',3,'number')">Studios Affected</th>
-                <th class="sortable-col" onclick="sortTable('skus-table',4,'number')">Weeks Appearing</th>
+                {{ sortable_th('skus-table', 0, 'string', 'SKU') }}
+                {{ sortable_th('skus-table', 1, 'string', 'Description') }}
+                {{ sortable_th('skus-table', 2, 'number', 'Total Units') }}
+                {{ sortable_th('skus-table', 3, 'number', 'Studios Affected') }}
+                {{ sortable_th('skus-table', 4, 'number', 'Weeks Appearing') }}
             </tr>
         </thead>
         <tbody>

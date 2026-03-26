@@ -1,3 +1,4 @@
+{% from "macros.html" import sortable_th %}
 {% if data.sku_bypass %}
 <div class="hq-bypass-banner">
     &#9888; No SKU list loaded &mdash; reconciling all variance SKUs. Upload a SKU list file to enable standard filtering.
@@ -73,11 +74,11 @@
     <thead>
         <tr>
             <th class="hq-th-arrow"></th>
-            <th class="sortable-col" onclick="sortTable('store-table',1,'string')">Studio</th>
-            <th class="sortable-col" onclick="sortTable('store-table',2,'string')">Status</th>
-            <th class="sortable-col" onclick="sortTable('store-table',3,'number')">Assigned SKUs</th>
-            <th class="sortable-col" onclick="sortTable('store-table',4,'number')">Discrepancies</th>
-            <th class="sortable-col" onclick="sortTable('store-table',5,'number')">Net Discrepancy</th>
+            {{ sortable_th('store-table', 1, 'string', 'Studio') }}
+            {{ sortable_th('store-table', 2, 'string', 'Status') }}
+            {{ sortable_th('store-table', 3, 'number', 'Assigned SKUs') }}
+            {{ sortable_th('store-table', 4, 'number', 'Discrepancies') }}
+            {{ sortable_th('store-table', 5, 'number', 'Net Discrepancy') }}
             <th></th>
         </tr>
     </thead>

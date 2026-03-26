@@ -20,6 +20,30 @@
 <button type="{{ type }}" class="hq-btn-red"{% if onclick %} onclick="{{ onclick }}"{% endif %}{% if name %} name="{{ name }}"{% endif %}{% if value is not none %} value="{{ value }}"{% endif %}>{{ label }}</button>
 {%- endmacro %}
 
+{# ---------- Section navigation ---------- #}
+
+{% macro section_nav() -%}
+<div class="hq-zone2">
+    <div class="hq-z2-spacer"></div>
+    <nav class="hq-section-nav">
+        <a href="/hq/?section=dashboard" class="hq-section-link">DASHBOARD</a>
+        <span class="hq-pipe">|</span>
+        <a href="/hq/?section=analytics" class="hq-section-link">ANALYTICS</a>
+        <span class="hq-pipe">|</span>
+        <a href="/hq/?section=database" class="hq-section-link">DATABASE</a>
+        <span class="hq-pipe">|</span>
+        <a href="/hq/?section=studios" class="hq-section-link">STUDIOS</a>
+    </nav>
+    <div class="hq-z2-spacer"></div>
+</div>
+{%- endmacro %}
+
+{# ---------- Sortable table header ---------- #}
+
+{% macro sortable_th(table_id, col_index, data_type, label, style=None) -%}
+<th{% if style %} style="{{ style }}"{% endif %} class="sortable-col" onclick="sortTable('{{ table_id }}',{{ col_index }},'{{ data_type }}')">{{ label }}</th>
+{%- endmacro %}
+
 {# ---------- Flash messages ---------- #}
 
 {% macro flash_messages() -%}

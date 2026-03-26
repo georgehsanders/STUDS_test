@@ -1,5 +1,5 @@
 {% extends "hq_base.html" %}
-{% from "macros.html" import btn_gold, btn_white, btn_red, flash_messages with context %}
+{% from "macros.html" import btn_gold, btn_white, btn_red, flash_messages, section_nav, sortable_th with context %}
 
 {% block title %}Files{% endblock %}
 
@@ -11,21 +11,7 @@
     <a href="/hq/settings" class="hq-portal-link">SETTINGS</a>
 {% endblock %}
 
-{% block section_nav %}
-    <div class="hq-zone2">
-        <div class="hq-z2-spacer"></div>
-        <nav class="hq-section-nav">
-            <a href="/hq/?section=dashboard" class="hq-section-link">DASHBOARD</a>
-            <span class="hq-pipe">|</span>
-            <a href="/hq/?section=analytics" class="hq-section-link">ANALYTICS</a>
-            <span class="hq-pipe">|</span>
-            <a href="/hq/?section=database" class="hq-section-link">DATABASE</a>
-            <span class="hq-pipe">|</span>
-            <a href="/hq/?section=studios" class="hq-section-link">STUDIOS</a>
-        </nav>
-        <div class="hq-z2-spacer"></div>
-    </div>
-{% endblock %}
+{% block section_nav %}{{ section_nav() }}{% endblock %}
 
 {% block content %}
         {{ flash_messages() }}
@@ -75,9 +61,9 @@
                 <thead>
                     <tr>
                         <th class="select-col" style="display:none;width:30px;"><input type="checkbox" id="select-all" onchange="toggleSelectAll(this);"></th>
-                        <th class="sortable-col" onclick="sortTable('files-table',1,'string')">File Name</th>
-                        <th class="sortable-col" onclick="sortTable('files-table',2,'string')">Last Modified</th>
-                        <th class="sortable-col" onclick="sortTable('files-table',3,'number')">Size</th>
+                        {{ sortable_th('files-table', 1, 'string', 'File Name') }}
+                        {{ sortable_th('files-table', 2, 'string', 'Last Modified') }}
+                        {{ sortable_th('files-table', 3, 'number', 'Size') }}
                         <th></th>
                     </tr>
                 </thead>

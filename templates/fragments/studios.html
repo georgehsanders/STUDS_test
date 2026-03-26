@@ -1,3 +1,4 @@
+{% from "macros.html" import sortable_th %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>var storeReconData = {{ recon_data | tojson }}; var storeAnalytics = {{ store_analytics | tojson }};</script>
 <div class="hq-studios">
@@ -14,10 +15,10 @@
             <thead>
                 <tr>
                     <th style="width:50px;">Count</th>
-                    <th class="sortable-col" onclick="sortTable('studios-table',1,'string')">Studio</th>
-                    <th class="sortable-col" onclick="sortTable('studios-table',2,'string')">Manager</th>
-                    <th class="sortable-col" onclick="sortTable('studios-table',3,'string')">Email</th>
-                    <th class="sortable-col" onclick="sortTable('studios-table',4,'string')">Phone</th>
+                    {{ sortable_th('studios-table', 1, 'string', 'Studio') }}
+                    {{ sortable_th('studios-table', 2, 'string', 'Manager') }}
+                    {{ sortable_th('studios-table', 3, 'string', 'Email') }}
+                    {{ sortable_th('studios-table', 4, 'string', 'Phone') }}
                 </tr>
             </thead>
             <tbody id="studios-tbody">

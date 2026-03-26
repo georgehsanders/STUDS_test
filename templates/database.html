@@ -1,5 +1,5 @@
 {% extends "hq_base.html" %}
-{% from "macros.html" import btn_gold, flash_messages with context %}
+{% from "macros.html" import btn_gold, flash_messages, section_nav with context %}
 
 {% block title %}Database{% endblock %}
 
@@ -11,21 +11,7 @@
     <a href="/hq/settings" class="hq-portal-link">SETTINGS</a>
 {% endblock %}
 
-{% block section_nav %}
-    <div class="hq-zone2">
-        <div class="hq-z2-spacer"></div>
-        <nav class="hq-section-nav">
-            <a href="/hq/?section=dashboard" class="hq-section-link">DASHBOARD</a>
-            <span class="hq-pipe">|</span>
-            <a href="/hq/?section=analytics" class="hq-section-link">ANALYTICS</a>
-            <span class="hq-pipe">|</span>
-            <a href="/hq/?section=database" class="hq-section-link">DATABASE</a>
-            <span class="hq-pipe">|</span>
-            <a href="/hq/?section=studios" class="hq-section-link">STUDIOS</a>
-        </nav>
-        <div class="hq-z2-spacer"></div>
-    </div>
-{% endblock %}
+{% block section_nav %}{{ section_nav() }}{% endblock %}
 
 {% block content %}
         {{ flash_messages() }}
