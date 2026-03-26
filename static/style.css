@@ -1,5 +1,6 @@
 :root { --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif; }
-body { font-family: var(--font-main); }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font-main); }
 
 /* ==========================================================================
    LOGIN PAGES — shared login portal styles
@@ -1203,7 +1204,6 @@ body.hq-body #refresh-btn:disabled {
     align-items: center;
     padding: 10px 32px;
     width: 100%;
-    box-sizing: border-box;
 }
 
 .hq-z2-spacer {
@@ -1576,9 +1576,12 @@ body.hq-body #refresh-btn:disabled {
     align-items: center;
     gap: 10px;
     background: #ffffff;
-    padding: 12px 0;
+    padding: 12px 32px;
     border-bottom: 1px solid #e0e0e0;
     margin-bottom: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 90;
 }
 
 .hq-analytics-navlink {
