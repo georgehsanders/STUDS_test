@@ -1,3 +1,6 @@
+:root { --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+body { font-family: var(--font-main); }
+
 /* ==========================================================================
    LOGIN PAGES — shared login portal styles
    ========================================================================== */
@@ -28,7 +31,6 @@
 }
 
 .hq-login-confidential {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -51,7 +53,6 @@
     border-radius: 0;
     font-size: 13px;
     letter-spacing: 0.05em;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .hq-login-form button {
@@ -64,7 +65,6 @@
     font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.1em;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .hq-login-form button:hover {
@@ -97,7 +97,6 @@
    ========================================================================== */
 
 .hq-body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #ffffff;
     color: #1a1a1a;
     padding: 0;
@@ -131,7 +130,6 @@
 }
 
 .hq-logotype {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 22px;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -146,7 +144,6 @@
 }
 
 .hq-header-label {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -162,7 +159,6 @@
 }
 
 .hq-timestamp {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     color: #999999;
     letter-spacing: 0.02em;
@@ -174,7 +170,6 @@
 }
 
 .hq-nav-link {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -197,7 +192,6 @@
     height: 32px;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.1em;
@@ -239,7 +233,6 @@
     color: #1a1a1a;
     padding: 10px 16px;
     margin-top: 20px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -257,7 +250,6 @@
     color: #1a1a1a;
     padding: 8px 14px;
     margin-bottom: 4px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
 }
 
@@ -281,7 +273,6 @@
 }
 
 .hq-summary-label {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -291,14 +282,12 @@
 }
 
 .hq-summary-value {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 28px;
     font-weight: 500;
     color: #1a1a1a;
 }
 
 .hq-summary-value-sm {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 500;
     color: #1a1a1a;
@@ -306,7 +295,6 @@
 }
 
 .hq-summary-sub {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     color: #999999;
     margin-top: 3px;
@@ -333,7 +321,6 @@
 }
 
 .hq-control-label {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -341,7 +328,6 @@
 }
 
 .hq-select {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     padding: 4px 8px;
     border: 1.5px solid #000000;
@@ -358,7 +344,6 @@
     width: 100%;
     border-collapse: collapse;
     background: #ffffff;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .hq-table thead th {
@@ -410,7 +395,6 @@
     display: inline-block;
     padding: 3px 10px;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.06em;
@@ -443,7 +427,6 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
 }
 
@@ -473,7 +456,6 @@
 .hq-no-disc {
     padding: 14px 0;
     color: #999999;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
 }
 
@@ -524,7 +506,6 @@
 }
 
 .hq-modal-header h2 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -561,7 +542,6 @@
 
 .hq-form-group label {
     display: block;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -575,7 +555,6 @@
     padding: 8px 10px;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
 }
@@ -586,7 +565,6 @@
     padding: 10px;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
     resize: vertical;
@@ -599,7 +577,6 @@ body.hq-body #refresh-btn {
     color: #1a1a1a;
     border: none;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -641,7 +618,6 @@ body.hq-body #refresh-btn:disabled {
 }
 
 .hq-section-heading {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -651,7 +627,6 @@ body.hq-body #refresh-btn:disabled {
 }
 
 .hq-help-text {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 12px;
     color: #999999;
     margin-bottom: 16px;
@@ -666,7 +641,6 @@ body.hq-body #refresh-btn:disabled {
 }
 
 .hq-upload-form input[type="file"] {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
 }
@@ -678,7 +652,6 @@ body.hq-body #refresh-btn:disabled {
     color: #000000;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -697,7 +670,6 @@ body.hq-body #refresh-btn:disabled {
     color: #ffffff;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -718,7 +690,6 @@ body.hq-body #refresh-btn:disabled {
     color: #000000;
     border: 1px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.08em;
@@ -736,7 +707,6 @@ body.hq-body #refresh-btn:disabled {
 .hq-body .hq-table tbody td {
     padding: 10px 12px;
     border-bottom: 1px solid #e0e0e0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
 }
@@ -768,7 +738,6 @@ body.hq-body #refresh-btn:disabled {
 body.hq-body .settings-input {
     border: 1px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     padding: 8px 10px;
 }
@@ -776,7 +745,6 @@ body.hq-body .settings-input {
 body.hq-body .settings-textarea {
     border: 1px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     padding: 10px;
 }
@@ -788,7 +756,6 @@ body.hq-body .settings-textarea {
    ========================================================================== */
 
 .studio-body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #ffffff;
     color: #1a1a1a;
     padding: 0;
@@ -878,7 +845,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-zone2-label {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -891,7 +857,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-confidential {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.14em;
@@ -901,7 +866,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-sku-filename {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     color: #999999;
     letter-spacing: 0.06em;
@@ -912,7 +876,6 @@ body.hq-body .settings-textarea {
     color: #000000;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -934,7 +897,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-logotype {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 22px;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -949,7 +911,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-header-label {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -965,14 +926,12 @@ body.hq-body .settings-textarea {
 }
 
 .studio-filename {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     color: #999999;
     letter-spacing: 0.02em;
 }
 
 .studio-nav-link {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -996,7 +955,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-empty-message {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     color: #999999;
     letter-spacing: 0.02em;
@@ -1020,7 +978,6 @@ body.hq-body .settings-textarea {
     padding: 10px 14px;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
     background: #ffffff;
@@ -1031,7 +988,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-sku-count {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     color: #999999;
     margin-top: 8px;
@@ -1089,14 +1045,12 @@ body.hq-body .settings-textarea {
 }
 
 .studio-card-noimg span {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     color: #cccccc;
     letter-spacing: 0.05em;
 }
 
 .studio-card-sku {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -1106,7 +1060,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-card-desc {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #555555;
     margin-bottom: 12px;
@@ -1129,7 +1082,6 @@ body.hq-body .settings-textarea {
     color: #000000;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1173,7 +1125,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-print-modal-header h2 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -1211,7 +1162,6 @@ body.hq-body .settings-textarea {
     color: #000000;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1229,7 +1179,6 @@ body.hq-body .settings-textarea {
 }
 
 .studio-print-modal-cancel a {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     color: #999999;
     text-decoration: none;
@@ -1358,7 +1307,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-subsection-heading {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.06em;
@@ -1369,7 +1317,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-muted-text {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #999999;
 }
@@ -1389,7 +1336,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-return-link {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1466,7 +1412,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-user-name {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.1em;
@@ -1475,7 +1420,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-timestamp {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.08em;
@@ -1494,7 +1438,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-confidential-sub {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.14em;
@@ -1506,11 +1449,9 @@ body.hq-body .settings-textarea {
 .hq-pipe {
     color: #cccccc;
     font-size: 11px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .hq-portal-link {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1567,7 +1508,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-section-link {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1587,7 +1527,6 @@ body.hq-body .settings-textarea {
 .hq-timestamp-box {
     border: 1px solid #000000;
     padding: 4px 10px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.06em;
@@ -1596,7 +1535,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-action-link {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1627,7 +1565,6 @@ body.hq-body .settings-textarea {
     padding: 10px 14px;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
     background: #ffffff;
@@ -1652,7 +1589,6 @@ body.hq-body .settings-textarea {
     justify-content: space-between;
     padding: 8px 14px;
     cursor: pointer;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
 }
@@ -1687,7 +1623,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-profile-name {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
     font-weight: 500;
     color: #1a1a1a;
@@ -1709,7 +1644,6 @@ body.hq-body .settings-textarea {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
 }
@@ -1720,7 +1654,6 @@ body.hq-body .settings-textarea {
     border-radius: 0;
     padding: 6px 8px;
     font-size: 13px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin-top: 2px;
 }
 
@@ -1745,7 +1678,6 @@ body.hq-body .settings-textarea {
     text-decoration: none;
     color: #1a1a1a;
     display: block;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 62px;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -1768,7 +1700,6 @@ body.hq-body .settings-textarea {
     margin-bottom: 8px;
     text-decoration: none;
     color: #1a1a1a;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .hq-settings-row:hover {
@@ -1798,7 +1729,6 @@ body.hq-body .settings-textarea {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     color: #1a1a1a;
 }
@@ -1843,7 +1773,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-info-label {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1853,7 +1782,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-info-value {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     color: #1a1a1a;
@@ -1869,7 +1797,6 @@ body.hq-body .settings-textarea {
     color: #000000;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -1892,7 +1819,6 @@ body.hq-body .settings-textarea {
     color: #000000;
     border: 1.5px solid #000000;
     border-radius: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
@@ -2016,7 +1942,6 @@ body.hq-body .settings-textarea {
 }
 
 .hq-analytics-navlink {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.12em;
