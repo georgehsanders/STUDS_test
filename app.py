@@ -775,15 +775,39 @@ def hq_generate_omnicounts():
         flash('Uploaded CSV has no SKU column.', 'error')
         return redirect(url_for('hq_upload'))
 
-    # Filter rows
-    output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=reader.fieldnames)
-    writer.writeheader()
+    # Collect matching rows and track which weekly SKUs appear
+    fieldnames = reader.fieldnames
+    matched_rows = []
+    seen_skus = set()
     for row in reader:
         cleaned = {k.strip(): v.strip() if v else '' for k, v in row.items()}
         sku_val = cleaned.get(sku_col, '').strip()
         if sku_val and not is_excluded_sku(sku_val) and sku_val in weekly_skus:
-            writer.writerow(cleaned)
+            matched_rows.append(cleaned)
+            seen_skus.add(sku_val)
+
+    # Detect quantity columns (numeric-looking) for zero-fill
+    numeric_cols = set()
+    for row in matched_rows[:50]:
+        for k, v in row.items():
+            if k == sku_col:
+                continue
+            try:
+                float(v.replace(',', ''))
+                numeric_cols.add(k)
+            except (ValueError, AttributeError):
+                pass
+
+    # Write matched rows + zero-fill rows for missing SKUs
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+    for row in matched_rows:
+        writer.writerow(row)
+    for sku in sorted(weekly_skus - seen_skus):
+        fill_row = {col: '0' if col in numeric_cols else '' for col in fieldnames}
+        fill_row[sku_col] = sku
+        writer.writerow(fill_row)
 
     output.seek(0)
     result_bytes = io.BytesIO(output.getvalue().encode('utf-8'))
