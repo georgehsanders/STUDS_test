@@ -17,6 +17,21 @@
         {{ flash_messages() }}
 
         <div class="hq-section">
+            <h2 class="hq-section-heading">GENERATE OMNICOUNTS FILE</h2>
+            <p class="hq-help-text">Upload a Brightpearl full inventory summary CSV and enter the store number to generate a filtered OnHands file.</p>
+            <form method="POST" action="/hq/generate-omnicounts" enctype="multipart/form-data" class="hq-upload-form" onsubmit="return validateOmnicounts();">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <input type="file" name="bp_file" accept=".csv" required>
+                    <label class="hq-control-label" style="margin:0;">STORE NUMBER
+                        <input type="text" name="store_number" id="omni-store-number" inputmode="numeric" pattern="[0-9]+" required style="width:80px;margin-left:6px;" class="hq-select">
+                    </label>
+                    {{ btn_gold('GENERATE', type='submit') }}
+                </div>
+                <div id="omni-validation-msg" style="color:#c00;margin-top:6px;display:none;"></div>
+            </form>
+        </div>
+
+        <div class="hq-section">
             <h2 class="hq-section-heading">Add Files</h2>
             <p class="hq-help-text">Upload variance files, SKU lists, or audit trail CSVs.</p>
             <form method="POST" enctype="multipart/form-data" class="hq-upload-form">
@@ -111,6 +126,19 @@
 
 {% block scripts %}
     <script>
+        function validateOmnicounts() {
+            var input = document.getElementById('omni-store-number');
+            var msg = document.getElementById('omni-validation-msg');
+            var val = input.value.replace(/\s/g, '');
+            input.value = val;
+            if (!val || !/^\d+$/.test(val)) {
+                msg.textContent = 'Store number must contain only digits.';
+                msg.style.display = 'block';
+                return false;
+            }
+            msg.style.display = 'none';
+            return true;
+        }
         var _sortState = {};
         function sortTable(tableId, colIndex, dataType) {
             var table = document.getElementById(tableId);

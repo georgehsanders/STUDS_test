@@ -736,6 +736,61 @@ def hq_upload():
     return render_template('upload.html', global_files=global_files, variance_files=variance_files)
 
 
+@app.route('/hq/generate-omnicounts', methods=['POST'])
+@hq_login_required
+def hq_generate_omnicounts():
+    # Validate store number
+    store_number = request.form.get('store_number', '').strip()
+    if not store_number or not store_number.isdigit():
+        flash('Store number must be numeric.', 'error')
+        return redirect(url_for('hq_upload'))
+
+    # Find the weekly SKU list using reconcile's scan
+    scan = scan_input_files()
+    if not scan['sku_lists']:
+        flash('No weekly SKU list file found in /input/. Upload one before generating.', 'error')
+        return redirect(url_for('hq_upload'))
+
+    sku_list_filename = scan['sku_lists'][0][0]
+    weekly_skus = load_sku_list(os.path.join(INPUT_DIR, sku_list_filename))
+
+    # Read and filter the uploaded Brightpearl CSV
+    bp_file = request.files.get('bp_file')
+    if not bp_file or not bp_file.filename:
+        flash('Please upload a Brightpearl inventory CSV.', 'error')
+        return redirect(url_for('hq_upload'))
+
+    raw_bytes = bp_file.read()
+    text = clean_csv_content(raw_bytes)
+    reader = csv.DictReader(io.StringIO(text))
+    reader.fieldnames = [h.strip() for h in reader.fieldnames]
+
+    # Detect SKU column (case-insensitive)
+    sku_col = None
+    for h in reader.fieldnames:
+        if h.lower() == 'sku':
+            sku_col = h
+            break
+    if sku_col is None:
+        flash('Uploaded CSV has no SKU column.', 'error')
+        return redirect(url_for('hq_upload'))
+
+    # Filter rows
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=reader.fieldnames)
+    writer.writeheader()
+    for row in reader:
+        cleaned = {k.strip(): v.strip() if v else '' for k, v in row.items()}
+        sku_val = cleaned.get(sku_col, '').strip()
+        if sku_val and not is_excluded_sku(sku_val) and sku_val in weekly_skus:
+            writer.writerow(cleaned)
+
+    output.seek(0)
+    result_bytes = io.BytesIO(output.getvalue().encode('utf-8'))
+    download_name = f'{store_number}_OnHands.csv'
+    return send_file(result_bytes, mimetype='text/csv', as_attachment=True, download_name=download_name)
+
+
 @app.route('/hq/delete-file', methods=['POST'])
 @hq_login_required
 def hq_delete_file():
