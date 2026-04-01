@@ -775,38 +775,47 @@ def hq_generate_omnicounts():
         flash('Uploaded CSV has no SKU column.', 'error')
         return redirect(url_for('hq_upload'))
 
-    # Collect matching rows and track which weekly SKUs appear
-    fieldnames = reader.fieldnames
-    matched_rows = []
-    seen_skus = set()
-    for row in reader:
-        cleaned = {k.strip(): v.strip() if v else '' for k, v in row.items()}
-        sku_val = cleaned.get(sku_col, '').strip()
-        if sku_val and not is_excluded_sku(sku_val) and sku_val in weekly_skus:
-            matched_rows.append(cleaned)
-            seen_skus.add(sku_val)
+    # Authoritative ordered column list from the CSV header
+    fieldnames = list(reader.fieldnames)
 
-    # Detect quantity columns (numeric-looking) for zero-fill
-    numeric_cols = set()
-    for row in matched_rows[:50]:
-        for k, v in row.items():
-            if k == sku_col:
-                continue
-            try:
-                float(v.replace(',', ''))
-                numeric_cols.add(k)
-            except (ValueError, AttributeError):
-                pass
-
-    # Detect Product ID and Product name columns (case-insensitive)
+    # Detect known columns by case-insensitive match
     product_id_col = None
     product_name_col = None
+    options_col = None
     for h in fieldnames:
         hl = h.lower()
         if hl == 'product id' and product_id_col is None:
             product_id_col = h
         elif hl == 'product name' and product_name_col is None:
             product_name_col = h
+        elif hl == 'options' and options_col is None:
+            options_col = h
+    text_cols = {sku_col, product_id_col, product_name_col, options_col} - {None}
+
+    # Collect matching rows, keyed exactly to fieldnames
+    matched_rows = []
+    seen_skus = set()
+    for row in reader:
+        out = {}
+        for col in fieldnames:
+            val = row.get(col)
+            out[col] = val.strip() if val else ''
+        sku_val = out[sku_col]
+        if sku_val and not is_excluded_sku(sku_val) and sku_val in weekly_skus:
+            matched_rows.append(out)
+            seen_skus.add(sku_val)
+
+    # Detect numeric columns from matched data (excluding known text columns)
+    numeric_cols = set()
+    for row in matched_rows[:50]:
+        for col in fieldnames:
+            if col in text_cols:
+                continue
+            try:
+                float(row[col].replace(',', ''))
+                numeric_cols.add(col)
+            except (ValueError, AttributeError):
+                pass
 
     # Load SKU Master for descriptions
     sku_master_desc = {}
@@ -818,19 +827,27 @@ def hq_generate_omnicounts():
             if s:
                 sku_master_desc[s] = row.get('description', '').strip()
 
-    # Write matched rows + zero-fill rows for missing SKUs
+    # Write matched rows + placeholder rows for missing SKUs
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=fieldnames)
     writer.writeheader()
     for row in matched_rows:
         writer.writerow(row)
     for sku in sorted(weekly_skus - seen_skus):
-        fill_row = {col: '0' if col in numeric_cols else '' for col in fieldnames}
-        fill_row[sku_col] = sku
-        if product_id_col:
-            fill_row[product_id_col] = ''
-        if product_name_col:
-            fill_row[product_name_col] = sku_master_desc.get(sku, '')
+        fill_row = {}
+        for col in fieldnames:
+            if col == sku_col:
+                fill_row[col] = sku
+            elif col == product_id_col:
+                fill_row[col] = ''
+            elif col == product_name_col:
+                fill_row[col] = sku_master_desc.get(sku, '')
+            elif col == options_col:
+                fill_row[col] = ''
+            elif col in numeric_cols:
+                fill_row[col] = '0'
+            else:
+                fill_row[col] = ''
         writer.writerow(fill_row)
 
     output.seek(0)
