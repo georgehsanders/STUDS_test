@@ -765,49 +765,49 @@ def hq_generate_omnicounts():
     reader = csv.DictReader(io.StringIO(text))
     reader.fieldnames = [h.strip() for h in reader.fieldnames]
 
-    # Detect SKU column (case-insensitive)
-    sku_col = None
-    for h in reader.fieldnames:
-        if h.lower() == 'sku':
-            sku_col = h
-            break
-    if sku_col is None:
-        flash('Uploaded CSV has no SKU column.', 'error')
-        return redirect(url_for('hq_upload'))
-
     # Authoritative ordered column list from the CSV header
     fieldnames = list(reader.fieldnames)
 
-    # Detect known columns by case-insensitive match
+    # Detect all known columns in a single pass (case-insensitive, original case preserved)
+    sku_col = None
     product_id_col = None
     product_name_col = None
     options_col = None
     for h in fieldnames:
         hl = h.lower()
-        if hl == 'product id' and product_id_col is None:
+        if hl == 'sku' and sku_col is None:
+            sku_col = h
+        elif hl == 'product id' and product_id_col is None:
             product_id_col = h
         elif hl == 'product name' and product_name_col is None:
             product_name_col = h
         elif hl == 'options' and options_col is None:
             options_col = h
+    if sku_col is None:
+        flash('Uploaded CSV has no SKU column.', 'error')
+        return redirect(url_for('hq_upload'))
     text_cols = {sku_col, product_id_col, product_name_col, options_col} - {None}
 
-    # Collect matching rows, keyed exactly to fieldnames
+    # Collect matching rows, keyed exactly to fieldnames; sample all rows for numeric detection
     matched_rows = []
     seen_skus = set()
+    all_rows_sample = []
     for row in reader:
         out = {}
         for col in fieldnames:
             val = row.get(col)
             out[col] = val.strip() if val else ''
+        if len(all_rows_sample) < 50:
+            all_rows_sample.append(out)
         sku_val = out[sku_col]
         if sku_val and not is_excluded_sku(sku_val) and sku_val in weekly_skus:
             matched_rows.append(out)
             seen_skus.add(sku_val)
 
-    # Detect numeric columns from matched data (excluding known text columns)
+    # Detect numeric columns — prefer matched rows, fall back to full CSV sample
+    sample_rows = matched_rows[:50] if matched_rows else all_rows_sample
     numeric_cols = set()
-    for row in matched_rows[:50]:
+    for row in sample_rows:
         for col in fieldnames:
             if col in text_cols:
                 continue
