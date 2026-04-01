@@ -787,9 +787,6 @@ def hq_generate_omnicounts():
         flash('Uploaded CSV has no SKU column.', 'error')
         return redirect(url_for('hq_upload'))
     text_cols = {sku_col, product_id_col, product_name_col, options_col} - {None}
-    print(f"[OMNICOUNTS DEBUG] fieldnames={fieldnames}")
-    print(f"[OMNICOUNTS DEBUG] sku_col={sku_col!r}, product_id_col={product_id_col!r}, product_name_col={product_name_col!r}, options_col={options_col!r}")
-    print(f"[OMNICOUNTS DEBUG] text_cols={text_cols}")
 
     # Collect matching rows, keyed exactly to fieldnames
     matched_rows = []
