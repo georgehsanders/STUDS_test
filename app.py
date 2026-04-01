@@ -788,34 +788,18 @@ def hq_generate_omnicounts():
         return redirect(url_for('hq_upload'))
     text_cols = {sku_col, product_id_col, product_name_col, options_col} - {None}
 
-    # Collect matching rows, keyed exactly to fieldnames; sample all rows for numeric detection
+    # Collect matching rows, keyed exactly to fieldnames
     matched_rows = []
     seen_skus = set()
-    all_rows_sample = []
     for row in reader:
         out = {}
         for col in fieldnames:
             val = row.get(col)
             out[col] = val.strip() if val else ''
-        if len(all_rows_sample) < 50:
-            all_rows_sample.append(out)
         sku_val = out[sku_col]
         if sku_val and not is_excluded_sku(sku_val) and sku_val in weekly_skus:
             matched_rows.append(out)
             seen_skus.add(sku_val)
-
-    # Detect numeric columns — prefer matched rows, fall back to full CSV sample
-    sample_rows = matched_rows[:50] if matched_rows else all_rows_sample
-    numeric_cols = set()
-    for row in sample_rows:
-        for col in fieldnames:
-            if col in text_cols:
-                continue
-            try:
-                float(row[col].replace(',', ''))
-                numeric_cols.add(col)
-            except (ValueError, AttributeError):
-                pass
 
     # Load SKU Master for descriptions
     sku_master_desc = {}
@@ -838,16 +822,12 @@ def hq_generate_omnicounts():
         for col in fieldnames:
             if col == sku_col:
                 fill_row[col] = sku
-            elif col == product_id_col:
-                fill_row[col] = ''
             elif col == product_name_col:
                 fill_row[col] = sku_master_desc.get(sku, '')
-            elif col == options_col:
+            elif col in text_cols:
                 fill_row[col] = ''
-            elif col in numeric_cols:
-                fill_row[col] = '0'
             else:
-                fill_row[col] = ''
+                fill_row[col] = '0'
         writer.writerow(fill_row)
 
     output.seek(0)
