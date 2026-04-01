@@ -798,6 +798,26 @@ def hq_generate_omnicounts():
             except (ValueError, AttributeError):
                 pass
 
+    # Detect Product ID and Product name columns (case-insensitive)
+    product_id_col = None
+    product_name_col = None
+    for h in fieldnames:
+        hl = h.lower()
+        if hl == 'product id' and product_id_col is None:
+            product_id_col = h
+        elif hl == 'product name' and product_name_col is None:
+            product_name_col = h
+
+    # Load SKU Master for descriptions
+    sku_master_desc = {}
+    sku_master_path = os.path.join(MASTER_DIR, 'SKU_Master.csv')
+    if os.path.isfile(sku_master_path):
+        master_rows = parse_csv(sku_master_path)
+        for row in master_rows:
+            s = row.get('sku', '').strip()
+            if s:
+                sku_master_desc[s] = row.get('description', '').strip()
+
     # Write matched rows + zero-fill rows for missing SKUs
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=fieldnames)
@@ -807,6 +827,10 @@ def hq_generate_omnicounts():
     for sku in sorted(weekly_skus - seen_skus):
         fill_row = {col: '0' if col in numeric_cols else '' for col in fieldnames}
         fill_row[sku_col] = sku
+        if product_id_col:
+            fill_row[product_id_col] = ''
+        if product_name_col:
+            fill_row[product_name_col] = sku_master_desc.get(sku, '')
         writer.writerow(fill_row)
 
     output.seek(0)
