@@ -29,13 +29,16 @@
                 <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#1a1a1a;margin-top:4px;">(CONFIDENTIAL)</div>
             </div>
             <div style="display:flex;justify-content:flex-end;align-items:flex-start;flex-direction:column;gap:6px;">
-                {% if not no_sku_list %}
-                <div style="display:flex;justify-content:flex-end;width:100%;">
+                <div style="display:flex;justify-content:flex-end;width:100%;gap:8px;">
+                    <div style="display:inline-flex;align-items:center;gap:10px;padding:0 16px;height:34px;width:auto;white-space:nowrap;border:1.5px solid #000;background:#e8b4f8;flex-shrink:0;">
+                        <a href="/studio/omnicounts" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:#000;text-decoration:none;">OMNICOUNTS</a>
+                    </div>
+                    {% if not no_sku_list %}
                     <div style="display:inline-flex;align-items:center;gap:10px;padding:0 16px;height:34px;width:auto;white-space:nowrap;border:1.5px solid #000;background:#e8b4f8;flex-shrink:0;">
                         <button onclick="handlePrint()" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:#000;background:none;border:none;padding:0;cursor:pointer;">PRINT</button>
                     </div>
+                    {% endif %}
                 </div>
-                {% endif %}
                 {% if sku_list_filename %}
                 <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;color:#999;letter-spacing:0.06em;text-align:right;width:100%;">{{ sku_list_filename }}</div>
                 {% endif %}
