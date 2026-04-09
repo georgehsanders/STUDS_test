@@ -420,6 +420,16 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 - [ ] No tag rendered if SKU is not in the status file or status is not active/sunset
 - [ ] Tags use CSS classes: `.studio-sku-tag`, `.studio-sku-tag-active`, `.studio-sku-tag-sunset`
 
+### Retail Price on Cards
+- [ ] Each SKU card displays the retail price right-aligned in the text area, opposite the SKU/description
+- [ ] Price data loaded from /database/SKU_Prices.csv via `load_sku_prices()`
+- [ ] File columns: sku, retail_price (decimal number, no currency symbol)
+- [ ] Format: "$XX.XX" with dollar sign and two decimal places
+- [ ] If SKU is not in the price file, no price is rendered
+- [ ] SKU lookup is case-insensitive (uppercased for matching)
+- [ ] CSS class: `.studio-sku-price` (bold, 14px, black)
+- [ ] Card info area uses flex layout (`.studio-card-info`) to align SKU/desc left and price right
+
 ### Print Functionality
 - [ ] If no search is active, clicking PRINT immediately calls `window.print()`
 - [ ] If a search filter is active, clicking PRINT opens a print options modal

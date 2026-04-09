@@ -285,6 +285,25 @@ def load_sku_status():
     return result
 
 
+def load_sku_prices():
+    """Load SKU_Prices.csv and return a dict of SKU (uppercase) -> retail_price (float)."""
+    filepath = os.path.join(DATABASE_DIR, 'SKU_Prices.csv')
+    if not os.path.isfile(filepath):
+        return {}
+    rows = parse_csv(filepath)
+    result = {}
+    for row in rows:
+        sku = row.get('sku', '').strip().upper()
+        price_str = row.get('retail_price', '').strip()
+        if not sku or not price_str:
+            continue
+        try:
+            result[sku] = float(price_str)
+        except ValueError:
+            continue
+    return result
+
+
 def find_image_for_sku(sku):
     """Find an image file in IMAGES_DIR whose name starts with the SKU (case-insensitive)."""
     if not os.path.isdir(IMAGES_DIR):
@@ -483,16 +502,19 @@ def studio_index():
 
         master = load_master_skus()
         sku_status = load_sku_status()
+        sku_prices = load_sku_prices()
 
         for sku in sorted(sku_set):
             desc = master.get(sku.upper(), '') or sku_names.get(sku, '') or sku
             image_filename = find_image_for_sku(sku)
             status = sku_status.get(sku.upper())
+            price = sku_prices.get(sku.upper())
             sku_items.append({
                 'sku': sku,
                 'description': desc,
                 'image_filename': image_filename,
                 'status': status,
+                'retail_price': price,
             })
 
     return render_template('studio.html',

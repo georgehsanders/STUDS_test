@@ -85,8 +85,15 @@
                     {% endif %}
                 </div>
                 {% endif %}
-                <div class="studio-card-sku">{{ item.sku }}</div>
-                <div class="studio-card-desc">{{ item.description }}</div>
+                <div class="studio-card-info">
+                    <div>
+                        <div class="studio-card-sku">{{ item.sku }}</div>
+                        <div class="studio-card-desc">{{ item.description }}</div>
+                    </div>
+                    {% if item.retail_price is not none %}
+                    <div class="studio-sku-price">${{ '%.2f'|format(item.retail_price) }}</div>
+                    {% endif %}
+                </div>
                 <svg id="barcode-{{ item.sku }}"></svg>
             </div>
             {% endfor %}

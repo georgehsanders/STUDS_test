@@ -836,6 +836,21 @@ body.hq-body #refresh-btn:disabled {
     letter-spacing: 0.05em;
 }
 
+.studio-card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.studio-sku-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
 .studio-card-sku {
     font-size: 11px;
     font-weight: 600;
@@ -848,7 +863,6 @@ body.hq-body #refresh-btn:disabled {
 .studio-card-desc {
     font-size: 13px;
     color: #555555;
-    margin-bottom: 12px;
 }
 
 .studio-card svg {
