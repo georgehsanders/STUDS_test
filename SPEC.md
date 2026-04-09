@@ -377,8 +377,14 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 ### Header
 - [ ] Left nav box (lime): LOGOUT (or HQ | LOGOUT if admin user)
 - [ ] Center: STUDS logo with "(CONFIDENTIAL)"
-- [ ] Right nav box (lavender): PRINT button (only shown if SKU list exists)
+- [ ] Right nav box (lavender): OMNICOUNTS | PRINT (PRINT only shown if SKU list exists)
 - [ ] SKU list filename displayed below header
+
+### BEGIN COUNT Button
+- [ ] Lime (#c8f135) bold uppercase button labeled "BEGIN COUNT"
+- [ ] Positioned in the content row below the header, right-aligned, same row as search input
+- [ ] Navigates to `/studio/tutorial`
+- [ ] Only visible when SKU list exists (inside studio-main)
 
 ### Empty State
 - [ ] If no SKU list file exists, displays a message indicating no active SKU list
@@ -405,9 +411,10 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 - [ ] Clicking outside the modal closes it
 - [ ] Print-specific stylesheet shows a "STUDS" header visible only on paper
 
-### Tutorial Page (`/studio/tutorial`)
-- [ ] Dedicated page accessible via TUTORIAL navlink in the Studio header (lavender button, left of OMNICOUNTS)
-- [ ] TUTORIAL navlink appears on all Studio pages (main, OmniCounts, Tutorial)
+### Begin Count / Tutorial Page (`/studio/tutorial`)
+- [ ] On Studio main page: lime BEGIN COUNT button in content row (right of search bar), navigates to `/studio/tutorial`
+- [ ] On OmniCounts page: BEGIN COUNT navlink in header nav (lavender, left of STUDIO link)
+- [ ] Sub-header label on tutorial page reads "BEGIN COUNT"
 - [ ] Header matches Studio sub-page layout (left: HQ/LOGOUT, center: STUDS logo, right: STUDIO link back)
 - [ ] Sub-header label shows "TUTORIAL"
 - [ ] Single-page multi-step walkthrough; one step visible at a time

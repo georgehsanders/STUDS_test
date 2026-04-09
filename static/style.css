@@ -952,6 +952,25 @@ body.hq-body #refresh-btn:disabled {
     color: #1a1a1a;
 }
 
+/* --- Begin Count button --- */
+
+.studio-begin-count-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 32px;
+    white-space: nowrap;
+    border: 1.5px solid #000;
+    border-radius: 0;
+    background: #c8f135;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #000;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
 /* --- Print header (hidden on screen, shown on print) --- */
 
 .studio-print-header {
