@@ -18,6 +18,16 @@
     </form>
 </div>
 
+<!-- SKU Prices File -->
+<div class="hq-section">
+    <h2 class="hq-section-heading">SKU Prices File</h2>
+    <p class="hq-help-text">{% if prices_count %}SKU_Prices.csv — {{ prices_count }} SKUs — Last updated: {{ prices_updated }}{% else %}—{% endif %}</p>
+    <form method="POST" action="/hq/database/upload-sku-prices" enctype="multipart/form-data" class="hq-upload-form">
+        <input type="file" name="prices_file" accept=".csv" required>
+        <button type="submit" class="hq-btn hq-btn-lavender">UPLOAD</button>
+    </form>
+</div>
+
 <!-- Product Images -->
 <div class="hq-section">
     <h2 class="hq-section-heading">Product Images</h2>

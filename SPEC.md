@@ -320,6 +320,16 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 - [ ] Canonical storage path: /database/master/SKU_Status.csv
 - [ ] Expected columns: sku, status (values: "active" or "sunset", case-insensitive)
 
+### SKU Prices File Section
+- [ ] Positioned below SKU Status File and above Product Images
+- [ ] Displays: filename (SKU_Prices.csv), SKU count, last updated timestamp (or dash if not present)
+- [ ] File upload input accepts `.csv` files
+- [ ] UPLOAD button submits the new prices file
+- [ ] Old prices file is archived before overwrite (file_type 'sku_prices')
+- [ ] Flash message confirms update with count of SKUs loaded
+- [ ] Canonical storage path: /database/SKU_Prices.csv
+- [ ] Expected columns: sku, retail_price (decimal number, no currency symbol)
+
 ### Product Images Section
 - [ ] Displays count of images in `/database/images/`
 - [ ] File upload input accepts `.jpg, .jpeg, .png, .webp`, supports multiple files

@@ -645,9 +645,16 @@ def hq_section_database():
     if os.path.isfile(status_path):
         status_rows = len(load_sku_status())
         status_updated = datetime.fromtimestamp(os.path.getmtime(status_path)).strftime('%Y-%m-%d %H:%M:%S')
+    prices_path = os.path.join(DATABASE_DIR, 'SKU_Prices.csv')
+    prices_count = 0
+    prices_updated = 'N/A'
+    if os.path.isfile(prices_path):
+        prices_count = len(load_sku_prices())
+        prices_updated = datetime.fromtimestamp(os.path.getmtime(prices_path)).strftime('%Y-%m-%d %H:%M:%S')
     return render_template('fragments/database.html',
                            msf_rows=msf_rows, msf_updated=msf_updated,
                            status_rows=status_rows, status_updated=status_updated,
+                           prices_count=prices_count, prices_updated=prices_updated,
                            image_count=image_count, orphaned=orphaned, missing=missing)
 
 
@@ -695,6 +702,20 @@ def hq_database_upload_sku_status():
         f.save(status_path)
         count = len(load_sku_status())
         flash(f'SKU Status file updated. {count} SKUs loaded.', 'success')
+    return redirect('/hq/?section=database')
+
+
+@app.route('/hq/database/upload-sku-prices', methods=['POST'])
+@hq_login_required
+def hq_database_upload_sku_prices():
+    prices_path = os.path.join(DATABASE_DIR, 'SKU_Prices.csv')
+    f = request.files.get('prices_file')
+    if f and f.filename:
+        archive_file_if_exists(prices_path, 'sku_prices')
+        os.makedirs(DATABASE_DIR, exist_ok=True)
+        f.save(prices_path)
+        count = len(load_sku_prices())
+        flash(f'SKU Prices file updated. {count} SKUs loaded.', 'success')
     return redirect('/hq/?section=database')
 
 
@@ -1202,6 +1223,16 @@ def hq_database():
                 count = len(load_sku_status())
                 flash(f'SKU Status file updated. {count} SKUs loaded.', 'success')
 
+        elif action == 'upload_sku_prices':
+            f = request.files.get('prices_file')
+            if f and f.filename:
+                prices_path = os.path.join(DATABASE_DIR, 'SKU_Prices.csv')
+                archive_file_if_exists(prices_path, 'sku_prices')
+                os.makedirs(DATABASE_DIR, exist_ok=True)
+                f.save(prices_path)
+                count = len(load_sku_prices())
+                flash(f'SKU Prices file updated. {count} SKUs loaded.', 'success')
+
         elif action == 'upload_images':
             img_files = request.files.getlist('image_files')
             count = 0
@@ -1250,6 +1281,14 @@ def hq_database():
         status_rows = len(load_sku_status())
         status_updated = datetime.fromtimestamp(os.path.getmtime(status_path)).strftime('%Y-%m-%d %H:%M:%S')
 
+    # SKU Prices file
+    prices_path = os.path.join(DATABASE_DIR, 'SKU_Prices.csv')
+    prices_count = 0
+    prices_updated = 'N/A'
+    if os.path.isfile(prices_path):
+        prices_count = len(load_sku_prices())
+        prices_updated = datetime.fromtimestamp(os.path.getmtime(prices_path)).strftime('%Y-%m-%d %H:%M:%S')
+
     # Archive browser
     archives = [dict(r) for r in conn.execute(
         "SELECT id, file_type, original_filename, store_id, archived_at, row_count, file_size_bytes FROM archive_files ORDER BY archived_at DESC LIMIT 50"
@@ -1259,6 +1298,7 @@ def hq_database():
     return render_template('database.html',
                            msf_rows=msf_rows, msf_updated=msf_updated,
                            status_rows=status_rows, status_updated=status_updated,
+                           prices_count=prices_count, prices_updated=prices_updated,
                            image_count=image_count,
                            orphaned=orphaned, missing=missing,
                            archives=archives,
