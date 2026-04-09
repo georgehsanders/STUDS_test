@@ -512,3 +512,21 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 
 ### Image Serving
 - [ ] Product images served from `/database/images/<filename>` (no authentication required)
+
+---
+
+## Deployment
+
+### STUDS_DATA_DIR Environment Variable
+- [ ] If `STUDS_DATA_DIR` is set, all mutable data directories are rooted under it:
+  - `INPUT_DIR` → `$STUDS_DATA_DIR/input/`
+  - `DATABASE_DIR` → `$STUDS_DATA_DIR/database/`
+  - `MASTER_DIR` → `$STUDS_DATA_DIR/database/master/`
+  - `IMAGES_DIR` → `$STUDS_DATA_DIR/database/images/`
+  - `PROCESSED_DIR` → `$STUDS_DATA_DIR/processed/`
+  - `STORE_DB` → `$STUDS_DATA_DIR/database/store_profiles.db`
+  - `ARCHIVE_DB` → `$STUDS_DATA_DIR/database/archive.db`
+- [ ] If `STUDS_DATA_DIR` is not set, all paths fall back to repo root (local development default)
+- [ ] `SETTINGS_FILE` always stays at the repo root regardless of `STUDS_DATA_DIR`
+- [ ] On startup (`__main__`), `INPUT_DIR`, `PROCESSED_DIR`, `DATABASE_DIR`, `MASTER_DIR`, and `IMAGES_DIR` are created if they don't exist
+- [ ] Purpose: allows Railway (or similar) to mount a single persistent volume at `STUDS_DATA_DIR` containing all mutable state

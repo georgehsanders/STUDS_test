@@ -30,9 +30,12 @@ ADMIN_USERNAME = 'hq'
 ADMIN_PASSWORD = 'hq'
 app.secret_key = 'studs-secret-key-change-in-production'
 
-PROCESSED_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'processed')
-SETTINGS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'settings.json')
-DATABASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database')
+_REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+_DATA_DIR = os.environ.get('STUDS_DATA_DIR', '').strip()
+
+PROCESSED_DIR = os.path.join(_DATA_DIR, 'processed') if _DATA_DIR else os.path.join(_REPO_ROOT, 'processed')
+SETTINGS_FILE = os.path.join(_REPO_ROOT, 'settings.json')
+DATABASE_DIR = os.path.join(_DATA_DIR, 'database') if _DATA_DIR else os.path.join(_REPO_ROOT, 'database')
 MASTER_DIR = os.path.join(DATABASE_DIR, 'master')
 IMAGES_DIR = os.path.join(DATABASE_DIR, 'images')
 STORE_DB = os.path.join(DATABASE_DIR, 'store_profiles.db')
@@ -1319,6 +1322,10 @@ def inject_globals():
 if __name__ == '__main__':
     os.makedirs(INPUT_DIR, exist_ok=True)
     os.makedirs(PROCESSED_DIR, exist_ok=True)
+    os.makedirs(DATABASE_DIR, exist_ok=True)
+    os.makedirs(MASTER_DIR, exist_ok=True)
+    os.makedirs(IMAGES_DIR, exist_ok=True)
     print(f"[STUDS Stock Check] Input directory: {INPUT_DIR}")
+    print(f"[STUDS Stock Check] Database directory: {DATABASE_DIR}")
     print(f"[STUDS Stock Check] Starting on http://localhost:5000")
     app.run(debug=True, host='127.0.0.1', port=5000)

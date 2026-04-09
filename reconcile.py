@@ -5,7 +5,11 @@ import io
 from datetime import datetime
 
 # --- Paths ---
-INPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'input')
+_DATA_DIR = os.environ.get('STUDS_DATA_DIR', '').strip()
+if _DATA_DIR:
+    INPUT_DIR = os.path.join(_DATA_DIR, 'input')
+else:
+    INPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'input')
 
 # --- Status constants ---
 STATUS_UPDATED = "Updated"
