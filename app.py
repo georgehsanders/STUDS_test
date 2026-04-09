@@ -483,6 +483,12 @@ def studio_index():
                            no_sku_list=no_sku_list)
 
 
+@app.route('/studio/tutorial')
+@studio_login_required
+def studio_tutorial():
+    return render_template('studio_tutorial.html')
+
+
 @app.route('/studio/omnicounts', methods=['GET', 'POST'])
 @studio_login_required
 def studio_omnicounts():

@@ -405,6 +405,26 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 - [ ] Clicking outside the modal closes it
 - [ ] Print-specific stylesheet shows a "STUDS" header visible only on paper
 
+### Tutorial Page (`/studio/tutorial`)
+- [ ] Dedicated page accessible via TUTORIAL navlink in the Studio header (lavender button, left of OMNICOUNTS)
+- [ ] TUTORIAL navlink appears on all Studio pages (main, OmniCounts, Tutorial)
+- [ ] Header matches Studio sub-page layout (left: HQ/LOGOUT, center: STUDS logo, right: STUDIO link back)
+- [ ] Sub-header label shows "TUTORIAL"
+- [ ] Single-page multi-step walkthrough; one step visible at a time
+- [ ] Intro screen (no step number): heading "Hey, Stud!", four-item checkbox checklist, begin button
+- [ ] Step 1: Brightpearl Inventory Summary — instructions with numbered sub-list, link to Brightpearl
+- [ ] Step 2: Converting to OmniCounts File — instructions with link to /studio/omnicounts (opens new tab)
+- [ ] Step 3: Data Dumping into Filezilla — placeholder text "(Jasmine to add more details here later...)"
+- [ ] Step 4: Printing SKU List — instructions for printing/scanning barcodes
+- [ ] Step 5: Begin your count — placeholder text
+- [ ] Step 6: Close Out Your Count — placeholder text
+- [ ] Step 7: Reconcile variances — instructions referencing handoffs@omnicounts.com variance email
+- [ ] Step 8: Check for major variances — recount instruction
+- [ ] Step 9: Make adjustments in Brightpearl — final step with completion message, no next button
+- [ ] Clicking next button hides current step and shows next step, scrolls to top
+- [ ] No persistence — refreshing returns to intro
+- [ ] Checkboxes on intro are visual only, no state tracked
+
 ### OmniCounts Page (`/studio/omnicounts`)
 - [ ] Dedicated page accessible via OMNICOUNTS navlink in the Studio header (lavender button, left of PRINT)
 - [ ] OMNICOUNTS navlink is always visible (not conditional on SKU list existence)
