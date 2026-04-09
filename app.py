@@ -41,6 +41,12 @@ IMAGES_DIR = os.path.join(DATABASE_DIR, 'images')
 STORE_DB = os.path.join(DATABASE_DIR, 'store_profiles.db')
 ARCHIVE_DB = os.path.join(DATABASE_DIR, 'archive.db')
 
+os.makedirs(INPUT_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DIR, exist_ok=True)
+os.makedirs(DATABASE_DIR, exist_ok=True)
+os.makedirs(MASTER_DIR, exist_ok=True)
+os.makedirs(IMAGES_DIR, exist_ok=True)
+
 # --- Default email template ---
 DEFAULT_EMAIL_BODY = (
     "We recently completed an inventory audit and found discrepancies in the following SKUs "
@@ -1360,11 +1366,6 @@ def inject_globals():
 
 
 if __name__ == '__main__':
-    os.makedirs(INPUT_DIR, exist_ok=True)
-    os.makedirs(PROCESSED_DIR, exist_ok=True)
-    os.makedirs(DATABASE_DIR, exist_ok=True)
-    os.makedirs(MASTER_DIR, exist_ok=True)
-    os.makedirs(IMAGES_DIR, exist_ok=True)
     print(f"[STUDS Stock Check] Input directory: {INPUT_DIR}")
     print(f"[STUDS Stock Check] Database directory: {DATABASE_DIR}")
     print(f"[STUDS Stock Check] Starting on http://localhost:5000")
