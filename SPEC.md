@@ -309,6 +309,17 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 - [ ] After upload, image/SKU audit runs automatically
 - [ ] Flash message confirms update with count of SKUs added and removed
 
+### SKU Status File Section
+- [ ] Positioned below Master SKU File and above Product Images
+- [ ] Displays: filename (SKU_Status.csv), SKU count, last updated timestamp (or dash if not present)
+- [ ] File upload input accepts `.csv` files
+- [ ] UPLOAD button submits the new status file
+- [ ] Old status file is archived before overwrite (file_type 'sku_status')
+- [ ] Flash message confirms update with count of SKUs loaded
+- [ ] Expected upload filename pattern: SKU_STATUS_MM.DD.YY.csv
+- [ ] Canonical storage path: /database/master/SKU_Status.csv
+- [ ] Expected columns: sku, status (values: "active" or "sunset", case-insensitive)
+
 ### Product Images Section
 - [ ] Displays count of images in `/database/images/`
 - [ ] File upload input accepts `.jpg, .jpeg, .png, .webp`, supports multiple files
@@ -400,6 +411,14 @@ Exhaustive checklist of every user-facing feature and observable behavior.
 - [ ] Images are loaded from `/database/images/` matching the SKU prefix (case-insensitive)
 - [ ] Barcodes generated client-side using JsBarcode (CODE128 format, 28px height, no text)
 - [ ] Cards have data attributes for SKU and description for search filtering
+
+### SKU Status Tags
+- [ ] Each SKU card displays a status tag in the top-right corner of the image area (if status is known)
+- [ ] Status data loaded from /database/master/SKU_Status.csv via `load_sku_status()`
+- [ ] ACTIVE tag: lavender (#e8b4f8) background, black text, label "ACTIVE"
+- [ ] SUNSET tag: lime (#c8f135) background, black text, label "SUNSET"
+- [ ] No tag rendered if SKU is not in the status file or status is not active/sunset
+- [ ] Tags use CSS classes: `.studio-sku-tag`, `.studio-sku-tag-active`, `.studio-sku-tag-sunset`
 
 ### Print Functionality
 - [ ] If no search is active, clicking PRINT immediately calls `window.print()`

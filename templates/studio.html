@@ -73,10 +73,16 @@
                 {% if item.image_filename %}
                 <div class="studio-card-img">
                     <img src="/database/images/{{ item.image_filename }}" alt="{{ item.sku }}">
+                    {% if item.status %}
+                    <span class="studio-sku-tag studio-sku-tag-{{ item.status }}">{{ item.status|upper }}</span>
+                    {% endif %}
                 </div>
                 {% else %}
                 <div class="studio-card-img studio-card-noimg">
                     <span>No image</span>
+                    {% if item.status %}
+                    <span class="studio-sku-tag studio-sku-tag-{{ item.status }}">{{ item.status|upper }}</span>
+                    {% endif %}
                 </div>
                 {% endif %}
                 <div class="studio-card-sku">{{ item.sku }}</div>

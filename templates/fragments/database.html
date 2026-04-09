@@ -8,6 +8,16 @@
     </form>
 </div>
 
+<!-- SKU Status File -->
+<div class="hq-section">
+    <h2 class="hq-section-heading">SKU Status File</h2>
+    <p class="hq-help-text">{% if status_rows %}SKU_Status.csv — {{ status_rows }} SKUs — Last updated: {{ status_updated }}{% else %}—{% endif %}</p>
+    <form method="POST" action="/hq/database/upload-sku-status" enctype="multipart/form-data" class="hq-upload-form">
+        <input type="file" name="status_file" accept=".csv" required>
+        <button type="submit" class="hq-btn hq-btn-lavender">UPLOAD</button>
+    </form>
+</div>
+
 <!-- Product Images -->
 <div class="hq-section">
     <h2 class="hq-section-heading">Product Images</h2>

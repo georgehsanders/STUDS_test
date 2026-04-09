@@ -270,6 +270,21 @@ def load_master_skus():
     return result
 
 
+def load_sku_status():
+    """Load SKU_Status.csv and return a dict of SKU (uppercase) -> status (lowercase)."""
+    filepath = os.path.join(MASTER_DIR, 'SKU_Status.csv')
+    if not os.path.isfile(filepath):
+        return {}
+    rows = parse_csv(filepath)
+    result = {}
+    for row in rows:
+        sku = row.get('sku', '').strip().upper()
+        status = row.get('status', '').strip().lower()
+        if sku and status in ('active', 'sunset'):
+            result[sku] = status
+    return result
+
+
 def find_image_for_sku(sku):
     """Find an image file in IMAGES_DIR whose name starts with the SKU (case-insensitive)."""
     if not os.path.isdir(IMAGES_DIR):
@@ -467,14 +482,17 @@ def studio_index():
                 sku_names[sku] = name
 
         master = load_master_skus()
+        sku_status = load_sku_status()
 
         for sku in sorted(sku_set):
             desc = master.get(sku.upper(), '') or sku_names.get(sku, '') or sku
             image_filename = find_image_for_sku(sku)
+            status = sku_status.get(sku.upper())
             sku_items.append({
                 'sku': sku,
                 'description': desc,
                 'image_filename': image_filename,
+                'status': status,
             })
 
     return render_template('studio.html',
@@ -596,8 +614,15 @@ def hq_section_database():
     master = load_master_skus()
     for m in missing:
         m['description'] = master.get(m['sku'], '')
+    status_path = os.path.join(MASTER_DIR, 'SKU_Status.csv')
+    status_rows = 0
+    status_updated = 'N/A'
+    if os.path.isfile(status_path):
+        status_rows = len(load_sku_status())
+        status_updated = datetime.fromtimestamp(os.path.getmtime(status_path)).strftime('%Y-%m-%d %H:%M:%S')
     return render_template('fragments/database.html',
                            msf_rows=msf_rows, msf_updated=msf_updated,
+                           status_rows=status_rows, status_updated=status_updated,
                            image_count=image_count, orphaned=orphaned, missing=missing)
 
 
@@ -631,6 +656,20 @@ def hq_database_upload_msf():
         f.save(msf_path)
         run_image_sku_audit()
         flash('Master SKU file updated.', 'success')
+    return redirect('/hq/?section=database')
+
+
+@app.route('/hq/database/upload-sku-status', methods=['POST'])
+@hq_login_required
+def hq_database_upload_sku_status():
+    status_path = os.path.join(MASTER_DIR, 'SKU_Status.csv')
+    f = request.files.get('status_file')
+    if f and f.filename:
+        archive_file_if_exists(status_path, 'sku_status')
+        os.makedirs(MASTER_DIR, exist_ok=True)
+        f.save(status_path)
+        count = len(load_sku_status())
+        flash(f'SKU Status file updated. {count} SKUs loaded.', 'success')
     return redirect('/hq/?section=database')
 
 
@@ -1128,6 +1167,16 @@ def hq_database():
                 run_image_sku_audit()
                 flash(f'Master SKU file updated. {len(diff_added)} SKUs added, {len(diff_removed)} SKUs removed.', 'success')
 
+        elif action == 'upload_sku_status':
+            f = request.files.get('status_file')
+            if f and f.filename:
+                status_path = os.path.join(MASTER_DIR, 'SKU_Status.csv')
+                archive_file_if_exists(status_path, 'sku_status')
+                os.makedirs(MASTER_DIR, exist_ok=True)
+                f.save(status_path)
+                count = len(load_sku_status())
+                flash(f'SKU Status file updated. {count} SKUs loaded.', 'success')
+
         elif action == 'upload_images':
             img_files = request.files.getlist('image_files')
             count = 0
@@ -1168,6 +1217,14 @@ def hq_database():
     for m in missing:
         m['description'] = master.get(m['sku'], '')
 
+    # SKU Status file
+    status_path = os.path.join(MASTER_DIR, 'SKU_Status.csv')
+    status_rows = 0
+    status_updated = 'N/A'
+    if os.path.isfile(status_path):
+        status_rows = len(load_sku_status())
+        status_updated = datetime.fromtimestamp(os.path.getmtime(status_path)).strftime('%Y-%m-%d %H:%M:%S')
+
     # Archive browser
     archives = [dict(r) for r in conn.execute(
         "SELECT id, file_type, original_filename, store_id, archived_at, row_count, file_size_bytes FROM archive_files ORDER BY archived_at DESC LIMIT 50"
@@ -1176,6 +1233,7 @@ def hq_database():
 
     return render_template('database.html',
                            msf_rows=msf_rows, msf_updated=msf_updated,
+                           status_rows=status_rows, status_updated=status_updated,
                            image_count=image_count,
                            orphaned=orphaned, missing=missing,
                            archives=archives,
